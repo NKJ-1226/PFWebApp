@@ -85,6 +85,11 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId> <!-- spring-security-coreの依存関係が追加されていなかったからかも、、 -->
+			<artifactId>spring-security-core</artifactId>
+			<!--<version>5.8.0</version>-->
+		</dependency>
 	</dependencies>
 
 	<build>

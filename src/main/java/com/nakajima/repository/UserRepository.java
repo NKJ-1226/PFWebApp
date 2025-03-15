@@ -3,9 +3,11 @@ package com.nakajima.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.nakajima.nkjwebapp.model.UserInfo;
 
+@Repository //これを書き忘れてたかも
 public interface UserRepository extends JpaRepository<UserInfo, Integer>{
     Optional<UserInfo> findByEmail(String email);  //カスタムメソッド、メールアドレスで検索する
 }
