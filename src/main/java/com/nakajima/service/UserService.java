@@ -27,4 +27,9 @@ public class UserService {
     public UserInfo getUserById(Integer id) {
         return userRepository.findById(id).orElse(null);
     }
+
+    // ユーザーをusernameで取得する
+    public UserInfo findByUsername(String username) {
+        return userRepository.findByUsername(username); // UserRepositoryのfindByUsernameを呼び出し
+    }
 }
