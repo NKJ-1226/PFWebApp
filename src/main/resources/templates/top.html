@@ -7,9 +7,9 @@
 </head>
 <body>
     <h2>トップメニュー</h2>
-    <form action="/logout" method="post">
+    <form id="logout-form" th:action="@{/logout}" method="post">
+        <input type="hidden" name="_csrf" value="${_csrf.token}"> 
         <button type="submit">ログアウト</button>
     </form>
-    <a href="/logout">ログアウト</a>
 </body>
 </html>

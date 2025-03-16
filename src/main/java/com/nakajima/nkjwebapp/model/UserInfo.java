@@ -13,6 +13,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,6 +32,8 @@ public class UserInfo implements UserDetails{
     @Column(nullable = false) //nullable...nullを許可するかどうか
     private String username;
 
+    @Size(min = 8,max = 32) // 8~32文字以上
+    @Pattern(regexp = "^[a-zA-Z0-9_-]{8,32}$",message = "8~32文字の半角英数字と_-のみ許可") // パスワードに許可する文字を指定
     @Column(nullable = false)
     private String password;
 
