@@ -11,9 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.core.userdetails.UserDetailsService; //インポート不足
-
-import com.nakajima.service.CustomUserDetailsService;
+//import org.springframework.security.core.userdetails.UserDetailsService; //インポート不足
+////import com.nakajima.service.CustomUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
     
-    private final CustomUserDetailsService customUserDetailsService;
+    //おそらくここでUserDetailsService の二重設定していたから無限ループ起きてログインできなかったっぽい
+    //private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -43,10 +43,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return customUserDetailsService;
-    }
+    //おそらくここでUserDetailsService の二重設定していたから無限ループ起きてログインできなかったみたい
+    //@Bean
+    //public UserDetailsService userDetailsService() {
+    //    return customUserDetailsService;
+    //}
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception{
