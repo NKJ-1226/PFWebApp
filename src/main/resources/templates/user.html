@@ -7,5 +7,10 @@
 </head>
 <body>
     <h2>ユーザー画面</h2>
+    <form id="logout-form" th:action="@{/logout}" method="post">
+        <input type="hidden" name="_csrf" value="${_csrf.token}"> <!-- CSRFトークン -->
+        <button type="submit">ログアウト</button>
+    </form>
+    
 </body>
 </html>

@@ -10,13 +10,19 @@
 	<div class="wrapper">
 		<form th:action="@{/login}" method="post" name="Login_Form"
 			class="form-signin">
-			<h2 class="form-signin-heading">ログインしてください</h2>
+			<h2 class="form-signin-heading">ログイン</h2>
+			<!-- ログイン失敗時のエラーメッセージ -->
 			<div th:if="${param.error}">
 				ユーザーIDかパスワードが違います！
 			</div>
+			
+			<!-- ログアウト成功時のメッセージ -->
+			<div th:if="${param.logout}">
+				<p>ログアウトしました。</p>
+			</div>
+			
 			<hr class="colorgraph">
-			<br>
-			<input type="text"  name="username" placeholder="username" /><br>
+			<input type="text"  name="username" placeholder="email" /><br>
 			<input type="password"  name="password" placeholder="password" /> <br>
 			<button name="Submit" value="Login" type="Submit">ログイン</button>
 		</form>

@@ -27,6 +27,7 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        
         http.formLogin(login -> login
             .loginProcessingUrl("/login") // ログインページ
             .loginPage("/login") // ログインページの指定
@@ -34,7 +35,10 @@ public class SecurityConfig {
             .failureUrl("/login?error") // ログイン失敗時のページ
             .permitAll() // 誰でもアクセス可能
         ).logout(logout -> logout
+            .logoutUrl("/logout") // ログアウト時URL
             .logoutSuccessUrl("/") // ログアウト成功時の遷移ページ
+            .permitAll() // ログアウトは誰でもアクセス可能
+            
         ).authorizeHttpRequests(authz -> authz
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 静的リソースは許可
             .requestMatchers("/").permitAll() // ホームページは許可
