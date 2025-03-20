@@ -51,8 +51,8 @@ public class LoginController {
         return "redirect:/login"; // ログイン画面にリダイレクト
     }
 
-    @GetMapping("/user")
-    public String user() {
-        return "user"; // ユーザー情報ページの表示
+    @GetMapping("/top")
+    public String top() {
+        return "top"; // ユーザー情報ページの表示
     }
 }

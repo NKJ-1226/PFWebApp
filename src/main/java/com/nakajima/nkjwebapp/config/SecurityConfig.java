@@ -32,7 +32,7 @@ public class SecurityConfig {
         http.formLogin(login -> login
             .loginProcessingUrl("/login") // ログインページ
             .loginPage("/login") // ログインページの指定
-            .defaultSuccessUrl("/user", true) // ログイン成功時のリダイレクトページ
+            .defaultSuccessUrl("/top", true) // ログイン成功時のリダイレクトページ
             .failureUrl("/login?error") // ログイン失敗時のページ
             .permitAll() // 誰でもアクセス可能
         ).logout(logout -> logout

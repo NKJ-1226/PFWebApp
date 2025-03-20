@@ -1,15 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=S, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>トップメニュー</title>
+    <style>
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f4f4f4;
+        }
+        .logout-button {
+            background: none;
+            border: none;
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px;
+            font-family: inherit;
+        }
+    </style>
 </head>
+
 <body>
+    <header>
+        <h1>トップメニュー</h1>
+        <form id="logout-form" th:action="@{/logout}" method="post">
+            <input type="hidden" name="_csrf" value="${_csrf.token}"> 
+            <button type="submit" class="logout-button">ログアウト</button>
+        </form>
+    </header>
+
     <h2>トップメニュー</h2>
-    <form id="logout-form" th:action="@{/logout}" method="post">
-        <input type="hidden" name="_csrf" value="${_csrf.token}"> 
-        <button type="submit">ログアウト</button>
+    <form action="/another-page" method="get">
+        <button type="submit" class="menu-button">アカウント一覧</button>
     </form>
+
 </body>
 </html>
