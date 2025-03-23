@@ -29,17 +29,23 @@
 
     <div class="d-flex justify-content-center gap-3">
         <form th:action="@{/user}" method="get">
-            <button type="submit" class="btn btn-primary">アカウント一覧</button>
+            <button type="submit" class="btn btn-primary btn-lg" style="font-size: 20px; padding: 12px 24px;">
+                アカウント管理
+            </button>
         </form>
     
         <form th:action="@{/likerunking}" method="get">
-            <button type="submit" class="btn btn-primary">いいねランキング</button>
+            <button type="submit" class="btn btn-primary btn-lg" style="font-size: 20px; padding: 12px 24px;">
+                いいねランキング
+            </button>
         </form>
     
         <form th:action="@{/contact_ad}" method="get">
-            <button type="submit" class="btn btn-primary">お問い合わせ一覧</button>
+            <button type="submit" class="btn btn-primary btn-lg" style="font-size: 20px; padding: 12px 24px;">
+                お問い合わせ一覧
+            </button>
         </form>
-    </div>
+    </div>    
 
 </body>
 </html>

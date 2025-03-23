@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.nakajima.nkjwebapp.model.UserInfo;
 
-@Repository //これを書き忘れてたかも
+@Repository
 public interface UserRepository extends JpaRepository<UserInfo, Integer>{
     Optional<UserInfo> findByEmail(String email);  //カスタムメソッド、メールアドレスで検索する
     UserInfo findByUsername(String username); // ユーザー名でユーザーを検索するメソッドを追加
