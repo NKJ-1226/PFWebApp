@@ -40,12 +40,17 @@ public class UserInfo implements UserDetails{
     @Column(nullable = false,unique = true) //unique...ダブり禁止するかしないか
     private String email;
 
-    private String role;
+    @Column(nullable = false) 
+    private String role; 
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() { //必ずこの変数にすること！！
+    public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));
-        
+    }
+
+    // 管理者権限を持っているか判定する
+    public boolean isAdmin() {
+        return "ROLE_ADMIN".equals(role);  // roleがROLE_ADMINならば管理者
     }
     
     // アカウントの削除確認
@@ -69,4 +74,6 @@ public class UserInfo implements UserDetails{
     public boolean isEnabled() {
         return true;
     }
+
+
 }

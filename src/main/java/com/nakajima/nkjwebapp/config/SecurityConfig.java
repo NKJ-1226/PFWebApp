@@ -8,12 +8,17 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.security.core.userdetails.UserDetailsService; //インポート不足
-////import com.nakajima.service.CustomUserDetailsService;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.core.Authentication;
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import com.nakajima.nkjwebapp.model.UserInfo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,37 +27,46 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    
-    //おそらくここでUserDetailsService の二重設定していたから無限ループ起きてログインできなかったっぽい
-    //private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         
-        http.formLogin(login -> login
-            .loginProcessingUrl("/login") // ログインページ
-            .loginPage("/login") // ログインページの指定
-            .defaultSuccessUrl("/top", true) // ログイン成功時のリダイレクトページ
-            .failureUrl("/login?error") // ログイン失敗時のページ
-            .permitAll() // 誰でもアクセス可能
+        http.csrf(csrf -> csrf.disable())  // CSRF保護を無効化
+        .formLogin(login -> login
+            .loginProcessingUrl("/login") // ログイン処理
+            .loginPage("/login") // ログインページ
+            .successHandler(customAuthenticationSuccessHandler()) // ログイン成功時のリダイレクト
+            .failureUrl("/login?error") // ログイン失敗時
+            .permitAll()
         ).logout(logout -> logout
-            .logoutUrl("/logout") // ログアウト時URL
-            .logoutSuccessUrl("/") // ログアウト成功時の遷移ページ
-            .permitAll() // ログアウトは誰でもアクセス可能
-            
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/login")
+            .permitAll()
         ).authorizeHttpRequests(authz -> authz
-            .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 静的リソースは許可
-            .requestMatchers("/").permitAll() // ホームページは許可
+            .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 静的リソース許可
+            .requestMatchers("/").permitAll() // ホームページ許可
+            .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // 管理者のみアクセス可能
             .anyRequest().authenticated() // その他は認証必須
         );
+
         return http.build();
     }
 
-    //おそらくここでUserDetailsService の二重設定していたから無限ループ起きてログインできなかったみたい
-    //@Bean
-    //public UserDetailsService userDetailsService() {
-    //    return customUserDetailsService;
-    //}
+    @Bean
+    public SimpleUrlAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+        return new SimpleUrlAuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                                Authentication authentication) throws IOException, ServletException {
+                UserInfo user = (UserInfo) authentication.getPrincipal();
+                if (user.isAdmin()) {
+                    getRedirectStrategy().sendRedirect(request, response, "/admin"); // 管理者ならこっち
+                } else {
+                    getRedirectStrategy().sendRedirect(request, response, "/top"); // 一般ユーザーならこっち
+                }
+            }
+        };
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception{
@@ -62,6 +76,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
-        //return new BCryptPasswordEncoder(); ハッシュ化を一旦やめる
     }
 }

@@ -19,7 +19,7 @@
         <header class="mb-4 bg-light p-3 rounded">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="text-dark text-decoration-none">トップメニュー</h1>
-                <form id="logout-form" th:action="@{/logout}" method="post">
+                <form id="logout-form" th:action="@{/logout}" method="get">
                     <input type="hidden" name="_csrf" value="${_csrf.token}"> 
                     <button type="submit" class="btn btn-dark" style="font-size: 18px;">ログアウト</button>
                 </form>
