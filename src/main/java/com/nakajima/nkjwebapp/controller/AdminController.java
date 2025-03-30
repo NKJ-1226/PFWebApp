@@ -58,13 +58,45 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger"); 
         }
     return "redirect:/user"; // 削除後、ユーザー一覧へリダイレクト
-}
-
-
-    
+    }
 
     @GetMapping("/contact_ad")
     public String showContactList() {
         return "contact_ad"; // contact_ad.htmlを表示させる
+    }
+
+    @GetMapping("/deleted_users")
+    public String showDeletedUsers(Model model) {
+        List<UserInfo> deletedUsers = userService.getDeletedUsers();
+        model.addAttribute("deletedUsers", deletedUsers);
+        return "deleted_users"; // 削除済みユーザー一覧ページ
+    }
+
+    // ユーザーの復元処理
+    @PostMapping("/user/restore")
+    public String restoreUser(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        boolean result = userService.restoreUser(id);
+        if (result) {
+            redirectAttributes.addFlashAttribute("message", "ユーザーを復元しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "ユーザーの復元に失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");   
+        }
+        return "redirect:/user"; // 復元後、ユーザー一覧へリダイレクト
+    }
+
+    // ユーザーの物理削除処理
+    @PostMapping("/user/delete/physical")
+    public String deleteUserPhysically(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        boolean result = userService.deleteUserPhysically(id);
+        if (result) {
+            redirectAttributes.addFlashAttribute("message", "ユーザーを物理削除しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "ユーザーの物理削除に失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/user"; // 削除後、ユーザー一覧へリダイレクト
     }
 }

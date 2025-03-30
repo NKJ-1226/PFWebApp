@@ -1,5 +1,6 @@
 package com.nakajima.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,10 +9,21 @@ import org.springframework.stereotype.Repository;
 import com.nakajima.nkjwebapp.model.UserInfo;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserInfo, Integer>{
-    Optional<UserInfo> findByEmail(String email);  //カスタムメソッド、メールアドレスで検索する
-    UserInfo findByUsername(String username); // ユーザー名でユーザーを検索するメソッドを追加
+public interface UserRepository extends JpaRepository<UserInfo, Integer> {
+    
+    // 削除されていないユーザーを取得する
+    List<UserInfo> findByIsDeletedFalse(); 
+
+    // 削除済みのユーザーを取得
+    List<UserInfo> findByIsDeletedTrue();
+
+    // メールアドレスで検索（削除されていないユーザーのみ）
+    Optional<UserInfo> findByEmailAndIsDeletedFalse(String email);
+
+    // ユーザー名で検索（削除されていないユーザーのみ）
+    Optional<UserInfo> findByUsernameAndIsDeletedFalse(String username);
 }
+
 
 
 /*
