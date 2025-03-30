@@ -20,37 +20,41 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users") //データベースのテーブル名の設定
-@NoArgsConstructor  //デフォで引数いらずのコンストラクタを作成
-@AllArgsConstructor //すべてのフィールドを引数の受け取るコンストラクタを自動で作成
-@Data //クラスを付与することで全フィールドでゲッターセッターが使える
-public class UserInfo implements UserDetails{
-    @Id //IDを主キーに設定する
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  //自動採番する
+@Table(name = "users") // データベースのテーブル名の設定
+@NoArgsConstructor  // デフォルトコンストラクタを作成
+@AllArgsConstructor // すべてのフィールドを引数に持つコンストラクタを自動生成
+@Data // ゲッター・セッター・toStringを自動生成
+public class UserInfo implements UserDetails {
+    
+    @Id // IDを主キーに設定
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 自動採番
     private int id;
 
-    @Column(nullable = false) //nullable...nullを許可するかどうか
+    @Column(nullable = false) // nullable...nullを許可するかどうか
     private String username;
 
-    @Size(min = 8,max = 32) // 8~32文字以上
-    @Pattern(regexp = "^[a-zA-Z0-9_-]{8,32}$",message = "8~32文字の半角英数字と_-のみ許可") // パスワードに許可する文字を指定
+    @Size(min = 8, max = 32) // 8~32文字
+    @Pattern(regexp = "^[a-zA-Z0-9_-]{8,32}$", message = "8~32文字の半角英数字と_-のみ許可") // パスワードに許可する文字を指定
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false,unique = true) //unique...ダブり禁止するかしないか
+    @Column(nullable = false, unique = true) // unique...重複禁止
     private String email;
 
     @Column(nullable = false) 
     private String role; 
+
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false; // 論理削除フラグ（デフォルト false）
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));
     }
 
-    // 管理者権限を持っているか判定する
+    // 管理者権限を持っているか判定
     public boolean isAdmin() {
-        return "ROLE_ADMIN".equals(role);  // roleがROLE_ADMINならば管理者
+        return "ROLE_ADMIN".equals(role);
     }
     
     // アカウントの削除確認
@@ -59,7 +63,7 @@ public class UserInfo implements UserDetails{
         return true;
     }
 
-    // アカウントがロックされていないかBAN等の処理に用いる(falseでロック)
+    // アカウントがロックされていないか (BAN など)
     @Override
     public boolean isAccountNonLocked() {
         return true;
@@ -70,10 +74,9 @@ public class UserInfo implements UserDetails{
         return true;
     }
 
+    // ユーザーが有効かどうか（論理削除されていたら無効にする）
     @Override
     public boolean isEnabled() {
-        return true;
+        return !isDeleted;
     }
-
-
 }
