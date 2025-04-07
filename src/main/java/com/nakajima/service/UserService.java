@@ -113,4 +113,46 @@ public class UserService {
         }
     }
 
+    // アカウントをロック（アクセス禁止）
+    @Transactional
+    public boolean lockUser(Integer id) {
+        try {
+            UserInfo user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ユーザーが見つかりません"));
+
+            if (user.isLocked()) {
+                throw new RuntimeException("このユーザーはロックされています");
+            }
+
+            user.setLocked(true);
+            userRepository.save(user);
+
+            return true;
+        } catch (Exception e) {
+            System.err.println("ロック中にエラーが発生しました: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // アカウントのロックを解除（アクセス許可）
+    @Transactional
+    public boolean unlockUser(Integer id) {
+        try {
+            UserInfo user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ユーザーが見つかりません"));
+
+            if (!user.isLocked()) {
+                throw new RuntimeException("このユーザーはロックされていません");
+            }
+
+            user.setLocked(false);
+            userRepository.save(user);
+
+            return true;
+        } catch (Exception e) {
+            System.err.println("アンロック中にエラーが発生しました: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

@@ -48,7 +48,17 @@
                         <td th:text="${user.email}"></td>
                         <td>
                             <a th:href="@{/user/edit/{id}(id=${user.id})}" class="btn btn-primary">編集</a>
+
+                            <!-- ロック／アンロックボタン -->
+                            <form th:action="@{${user.locked} ? '/user/unlock' : '/user/lock'}" method="post" style="display:inline;">
+                                <input type="hidden" name="id" th:value="${user.id}" />
+                                <input type="hidden" name="_csrf" value="${_csrf.token}">
+                                <button type="submit" th:classappend="${user.locked} ? 'btn btn-success' : 'btn btn-warning'" class="mb-1">
+                                    <span th:text="${user.locked} ? 'ロック解除' : 'アクセス禁止'"></span>
+                                </button>
+                            </form>
                         </td>
+                        
                     </tr>
                 </tbody>
             </table>

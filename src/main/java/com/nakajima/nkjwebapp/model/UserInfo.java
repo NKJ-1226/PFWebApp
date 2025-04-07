@@ -47,6 +47,9 @@ public class UserInfo implements UserDetails {
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false; // 論理削除フラグ（デフォルト false）
 
+    @Column(name = "is_locked", nullable = false)
+    private boolean isLocked = false; // アカウントロック（アクセス禁止）フラグ
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));
@@ -63,10 +66,10 @@ public class UserInfo implements UserDetails {
         return true;
     }
 
-    // アカウントがロックされていないか (BAN など)
+    // アカウントがロックされていないか（アクセス可能か）
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !isLocked;
     }
 
     @Override
