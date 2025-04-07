@@ -47,6 +47,26 @@ public class AdminController {
         return "redirect:/user"; // 更新後、ユーザー一覧へリダイレクト
     }
 
+    //ユーザーの追加処理
+    @PostMapping("/user/create")
+    public String createUser(@RequestParam String username, @RequestParam String email, @RequestParam String password, @RequestParam String role, RedirectAttributes redirectAttributes) {
+        try {
+            userService.createUser(username, email, password, role);
+            redirectAttributes.addFlashAttribute("message", "ユーザーを追加しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "ユーザーの追加に失敗しました: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/user"; // 追加した後、ユーザー一覧へリダイレクト
+    }
+
+    @GetMapping("/createuser_ad")
+    public String showCreateUserForm(Model model) {
+        // model.addAttribute("userForm", new UserForm());
+        return "createuser_ad";
+    }
+
     @PostMapping("/user/delete")
     public String postUserDetailDelete(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
     boolean result = userService.deleteOne(id);
@@ -111,7 +131,7 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("message", "アカウントのロックに失敗しました");
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
-        return "redirect:/user";
+        return "redirect:/user"; // ロック後、ユーザー一覧へリダイレクト
     }
 
     // アカウントのロック解除（アクセス許可）
@@ -125,6 +145,6 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("message", "ロック解除に失敗しました");
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
-        return "redirect:/user";
+        return "redirect:/user"; // ロック解除した後、ユーザー一覧へリダイレクト
     }
 }
