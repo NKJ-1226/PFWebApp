@@ -99,4 +99,32 @@ public class AdminController {
         }
         return "redirect:/user"; // 削除後、ユーザー一覧へリダイレクト
     }
+
+    // アカウントをロック（アクセス禁止）
+    @PostMapping("/user/lock")
+    public String lockUser(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        boolean result = userService.lockUser(id);
+        if (result) {
+            redirectAttributes.addFlashAttribute("message", "アカウントをロックしました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-warning");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "アカウントのロックに失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/user";
+    }
+
+    // アカウントのロック解除（アクセス許可）
+    @PostMapping("/user/unlock")
+    public String unlockUser(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        boolean result = userService.unlockUser(id);
+        if (result) {
+            redirectAttributes.addFlashAttribute("message", "アカウントのロックを解除しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "ロック解除に失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/user";
+    }
 }
