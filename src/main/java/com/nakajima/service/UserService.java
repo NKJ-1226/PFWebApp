@@ -40,6 +40,19 @@ public class UserService {
         return userRepository.findByUsernameAndIsDeletedFalse(username).orElse(null);
     }
 
+    // ユーザーの追加
+    @Transactional
+    public void createUser(String username, String email, String password, String role) {
+        UserInfo newUser = new UserInfo();
+        newUser.setUsername(username);
+        newUser.setEmail(email);
+        newUser.setPassword(password);
+        newUser.setRole(role);
+        newUser.setDeleted(false);
+        newUser.setLocked(false);
+        userRepository.save(newUser);
+    }
+
     // ユーザー情報を更新
     @Transactional
     public void updateUser(Integer id, String username, String email) {
