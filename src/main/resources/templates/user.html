@@ -43,12 +43,14 @@
                     <tr>
                         <th>ユーザー名</th>
                         <th>メールアドレス</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="user : ${users}">
+                    <tr th:each="user : ${userPage.content}">
                         <td th:text="${user.username}"></td>
                         <td th:text="${user.email}"></td>
+                        <td th:text="${user.role == 'ROLE_ADMIN' ? '管理者' : '一般ユーザー'}"></td>
                         <td>
                             <a th:href="@{/user/edit/{id}(id=${user.id})}" class="btn btn-primary">編集</a>
 
@@ -65,6 +67,31 @@
                     </tr>
                 </tbody>
             </table>
+
+            <!-- ページネーション -->
+            <nav aria-label="ページナビゲーション">
+                <ul class="pagination justify-content-center">
+
+                    <!-- 前へ -->
+                    <li class="page-item" th:classappend="${userPage.hasPrevious()} ? '' : 'disabled'">
+                        <a class="page-link" th:href="@{/user(page=${currentPage - 1})}">前へ</a>
+                    </li>
+
+                    <!-- 各ページ番号 -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{/user(page=${i})}" th:text="${i + 1}">1</a>
+                    </li>
+
+                    <!-- 次へ -->
+                    <li class="page-item" th:classappend="${userPage.hasNext()} ? '' : 'disabled'">
+                        <a class="page-link" th:href="@{/user(page=${currentPage + 1})}">次へ</a>
+                    </li>
+
+                </ul>
+            </nav>
+
             <a href="/deleted_users" style="font-size: 20px; padding: 12px 24px;">削除済み一覧へ</a> 
         </div>
 

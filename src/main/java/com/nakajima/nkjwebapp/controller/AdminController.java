@@ -5,14 +5,16 @@ import com.nakajima.nkjwebapp.model.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-
-import java.util.List;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.nio.file.*;
+import java.util.List;
 
 @Controller
 public class AdminController {
@@ -22,15 +24,19 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String adminHome() {
-        return "admin"; // admin.htmlを表示させる
+        return "admin";
     }
 
+    // アカウント一覧&ページネーション対応
     @GetMapping("/user")
-    public String showUserList(Model model) {
-        // 全ユーザーの情報を取得
-        List<UserInfo> users = userService.getAllUsers();
-        model.addAttribute("users", users); // ユーザー情報をビューに渡す
-        return "user"; // user.htmlを表示させる
+    public String showUserList(@RequestParam(defaultValue = "0") int page, Model model) {
+        int pageSize = 5;
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<UserInfo> userPage = userService.getUsersByPage(pageable);
+
+        model.addAttribute("userPage", userPage);
+        model.addAttribute("currentPage", page);
+        return "user";
     }
 
     @GetMapping("/user/edit/{id}")
@@ -41,58 +47,97 @@ public class AdminController {
     }
 
     @PostMapping("/user/update")
-    // ユーザーの更新情報を取得
-    public String updateUser(@RequestParam Integer id, @RequestParam String username, @RequestParam String email) {
-        userService.updateUser(id, username, email);
-        return "redirect:/user"; // 更新後、ユーザー一覧へリダイレクト
-    }
+    public String updateUser(
+        @RequestParam Integer id,
+        @RequestParam String username,
+        @RequestParam String email,
+        @RequestParam String role,
+        @RequestParam(required = false) String furigana,
+        @RequestParam(required = false) String gender,
+        @RequestParam(required = false) Integer age,
+        @RequestParam(required = false) String selfIntroduction,
+        @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+        RedirectAttributes redirectAttributes) {
 
-    //ユーザーの追加処理
-    @PostMapping("/user/create")
-    public String createUser(@RequestParam String username, @RequestParam String email, @RequestParam String password, @RequestParam String role, RedirectAttributes redirectAttributes) {
+        String imageFileName = null;
         try {
-            userService.createUser(username, email, password, role);
-            redirectAttributes.addFlashAttribute("message", "ユーザーを追加しました");
-            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "ユーザーの追加に失敗しました: " + e.getMessage());
+            imageFileName = userService.saveProfileImage(profileImage);
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("message", "画像のアップロードに失敗しました");
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/user";
         }
-        return "redirect:/user"; // 追加した後、ユーザー一覧へリダイレクト
+
+        userService.updateUser(id, username, email, role, furigana, gender, age, selfIntroduction, imageFileName);
+        redirectAttributes.addFlashAttribute("message", "ユーザー情報を更新しました");
+        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        return "redirect:/user";
+    }  
+
+    @PostMapping("/user/create")
+    public String createUser(
+        @RequestParam String username,
+        @RequestParam String email,
+        @RequestParam String password,
+        @RequestParam String role,
+        @RequestParam(required = false) String furigana,
+        @RequestParam(required = false) String gender,
+        @RequestParam(required = false) Integer age,
+        @RequestParam(required = false) String selfIntroduction,
+        @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+        RedirectAttributes redirectAttributes) {
+
+        String imageFileName = null;
+
+        try {
+            imageFileName = userService.saveProfileImage(profileImage);
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("message", "画像のアップロードに失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/user";
+        }
+
+        try {
+        userService.createUser(username, email, password, role, furigana, gender, age, selfIntroduction, imageFileName);
+        redirectAttributes.addFlashAttribute("message", "ユーザーを追加しました");
+        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("message", "ユーザーの追加に失敗しました: " + e.getMessage());
+        redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/user";
     }
 
     @GetMapping("/createuser_ad")
     public String showCreateUserForm(Model model) {
-        // model.addAttribute("userForm", new UserForm());
         return "createuser_ad";
     }
 
     @PostMapping("/user/delete")
     public String postUserDetailDelete(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
-    boolean result = userService.deleteOne(id);
+        boolean result = userService.deleteOne(id);
         if (result) {
             redirectAttributes.addFlashAttribute("message", "ユーザーを削除しました");
-            redirectAttributes.addFlashAttribute("alertClass", "alert-success"); 
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
         } else {
             redirectAttributes.addFlashAttribute("message", "ユーザーの削除に失敗しました");
-            redirectAttributes.addFlashAttribute("alertClass", "alert-danger"); 
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
-    return "redirect:/user"; // 削除後、ユーザー一覧へリダイレクト
+        return "redirect:/user";
     }
 
     @GetMapping("/contact_ad")
     public String showContactList() {
-        return "contact_ad"; // contact_ad.htmlを表示させる
+        return "contact_ad";
     }
 
     @GetMapping("/deleted_users")
     public String showDeletedUsers(Model model) {
         List<UserInfo> deletedUsers = userService.getDeletedUsers();
         model.addAttribute("deletedUsers", deletedUsers);
-        return "deleted_users"; // 削除済みユーザー一覧ページ
+        return "deleted_users";
     }
 
-    // ユーザーの復元処理
     @PostMapping("/user/restore")
     public String restoreUser(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         boolean result = userService.restoreUser(id);
@@ -101,12 +146,11 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("alertClass", "alert-success");
         } else {
             redirectAttributes.addFlashAttribute("message", "ユーザーの復元に失敗しました");
-            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");   
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
-        return "redirect:/user"; // 復元後、ユーザー一覧へリダイレクト
+        return "redirect:/user";
     }
 
-    // ユーザーの物理削除処理
     @PostMapping("/user/delete/physical")
     public String deleteUserPhysically(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         boolean result = userService.deleteUserPhysically(id);
@@ -117,10 +161,9 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("message", "ユーザーの物理削除に失敗しました");
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
-        return "redirect:/user"; // 削除後、ユーザー一覧へリダイレクト
+        return "redirect:/user";
     }
 
-    // アカウントをロック（アクセス禁止）
     @PostMapping("/user/lock")
     public String lockUser(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         boolean result = userService.lockUser(id);
@@ -131,10 +174,9 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("message", "アカウントのロックに失敗しました");
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
-        return "redirect:/user"; // ロック後、ユーザー一覧へリダイレクト
+        return "redirect:/user";
     }
 
-    // アカウントのロック解除（アクセス許可）
     @PostMapping("/user/unlock")
     public String unlockUser(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         boolean result = userService.unlockUser(id);
@@ -145,6 +187,19 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("message", "ロック解除に失敗しました");
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
-        return "redirect:/user"; // ロック解除した後、ユーザー一覧へリダイレクト
+        return "redirect:/user";
+    }
+
+    @PostMapping("/user/toggle-role")
+    public String toggleUserRole(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        boolean result = userService.toggleUserRole(id);
+        if (result) {
+            redirectAttributes.addFlashAttribute("message", "ユーザーの権限を切り替えました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-info");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "権限の切り替えに失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/user";
     }
 }

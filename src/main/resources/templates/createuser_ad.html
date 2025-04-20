@@ -18,16 +18,45 @@
         <div class="container mt-4">
 
             <!-- 編集フォーム -->
-            <form th:action="@{/user/create}" method="post">
-                <input type="text" name="username" placeholder="ユーザー名" required />
-                <input type="email" name="email" placeholder="メールアドレス" required />
-                <input type="password" name="password" placeholder="パスワード" required />
-                <select name="role">
-                    <option value="ROLE_USER">一般ユーザー</option>
-                    <option value="ROLE_ADMIN">管理者</option>
-                </select>
-                <button type="submit">登録</button>
+            <form th:action="@{/user/create}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="username" placeholder="ユーザー名" required />
+                </div>
+                <div class="mb-3">
+                    <input type="email" class="form-control" name="email" placeholder="メールアドレス" required />
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control" name="password" placeholder="パスワード" required />
+                </div>
+                <div class="mb-3">
+                    <select class="form-select" name="role">
+                        <option value="ROLE_USER">一般ユーザー</option>
+                        <option value="ROLE_ADMIN">管理者</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="furigana" placeholder="ふりがな" />
+                </div>
+                <div class="mb-3">
+                    <select class="form-select" name="gender">
+                        <option value="">性別を選択</option>
+                        <option value="男性">男性</option>
+                        <option value="女性">女性</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <input type="number" class="form-control" name="age" placeholder="年齢" />
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" name="selfIntroduction" rows="3" placeholder="自己紹介"></textarea>
+                </div>
+                <div class="mb-3">
+                    <input type="file" class="form-control" name="profileImage" accept="image/*" />
+                </div>            
+                <button type="submit" class="btn btn-primary">登録</button>
             </form>
+            
         </div>    
     </body>
 </html>
