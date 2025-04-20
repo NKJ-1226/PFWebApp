@@ -5,11 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.nakajima.nkjwebapp.model.UserInfo;
 import com.nakajima.repository.UserRepository;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.IOException;
+import org.springframework.web.multipart.MultipartFile;
+
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +48,10 @@ public class UserService {
 
     // ユーザーの追加
     @Transactional
-    public void createUser(String username, String email, String password, String role) {
+    public void createUser(String username, String email, String password, String role,
+                       String furigana, String gender, Integer age,
+                       String selfIntroduction, String profileImage) {
+
         UserInfo newUser = new UserInfo();
         newUser.setUsername(username);
         newUser.setEmail(email);
@@ -50,12 +59,21 @@ public class UserService {
         newUser.setRole(role);
         newUser.setDeleted(false);
         newUser.setLocked(false);
+        newUser.setFurigana(furigana);
+        newUser.setGender(gender);
+        newUser.setAge(age);
+        newUser.setSelfIntroduction(selfIntroduction);
+        newUser.setProfileImage(profileImage);
+
         userRepository.save(newUser);
     }
 
+
     // ユーザー情報を更新
     @Transactional
-    public void updateUser(Integer id, String username, String email) {
+    public void updateUser(Integer id, String username, String email, String role,
+                            String furigana, String gender, Integer age,
+                            String selfIntroduction, String profileImage) {
         UserInfo user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ユーザーが見つかりません"));
 
@@ -65,6 +83,14 @@ public class UserService {
 
         user.setUsername(username);
         user.setEmail(email);
+        user.setRole(role);
+        user.setFurigana(furigana);
+        user.setGender(gender);
+        user.setAge(age);
+        user.setSelfIntroduction(selfIntroduction);
+        if (profileImage != null && !profileImage.isEmpty()) {
+        user.setProfileImage(profileImage);
+        }
         userRepository.save(user);
     }
 
@@ -168,4 +194,54 @@ public class UserService {
         }
     }
 
+    // ユーザーの権限切替
+    @Transactional
+    public boolean toggleUserRole(Integer id) {
+        try {
+            UserInfo user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ユーザーが見つかりません"));
+            
+            if (user.isDeleted()) {
+                throw new RuntimeException("削除されたユーザーのロールは変更できません");
+            }
+
+            //Role切替
+            if ("ROLE_ADMIN".equals(user.getRole())) {
+                user.setRole("ROLE_USER");
+            } else {
+                user.setRole("ROLE_ADMIN");
+            }
+
+            userRepository.save(user);
+            return true;
+        } catch (Exception e) {
+            System.err.println("ロール変更中にエラーが発生しました: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ページネーション対応
+    public Page<UserInfo> getUsersByPage(Pageable pageable) {
+        return userRepository.findByIsDeletedFalse(pageable); // 論理削除されていないユーザーのみ
+    }
+
+    // 画像ファイルのアップロード処理
+    public String saveProfileImage(MultipartFile profileImage) throws IOException {
+        if (profileImage != null && !profileImage.isEmpty()) {
+            String uploadDir = "src/main/resources/static/uploads/";
+            String imageFileName = profileImage.getOriginalFilename();
+            Path uploadPath = Paths.get(uploadDir);
+    
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+    
+            Path filePath = uploadPath.resolve(imageFileName);
+            profileImage.transferTo(filePath.toFile());
+    
+            return imageFileName;
+        }
+        return null;
+    }
+ 
 }

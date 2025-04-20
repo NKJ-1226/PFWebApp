@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.nakajima.nkjwebapp.model.UserInfo;
 
@@ -22,6 +24,9 @@ public interface UserRepository extends JpaRepository<UserInfo, Integer> {
 
     // ユーザー名で検索（削除されていないユーザーのみ）
     Optional<UserInfo> findByUsernameAndIsDeletedFalse(String username);
+
+    // 削除されていないユーザーをページネーション付きで取得
+    Page<UserInfo> findByIsDeletedFalse(Pageable pageable);
 }
 
 

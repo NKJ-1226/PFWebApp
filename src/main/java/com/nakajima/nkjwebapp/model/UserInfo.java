@@ -33,6 +33,9 @@ public class UserInfo implements UserDetails {
     @Column(nullable = false) // nullable...nullを許可するかどうか
     private String username;
 
+    @Column(name = "furigana", length = 255) // ふりがな（最大255文字）
+    private String furigana;
+
     @Size(min = 8, max = 32) // 8~32文字
     @Pattern(regexp = "^[a-zA-Z0-9_-]{8,32}$", message = "8~32文字の半角英数字と_-のみ許可") // パスワードに許可する文字を指定
     @Column(nullable = false)
@@ -43,6 +46,19 @@ public class UserInfo implements UserDetails {
 
     @Column(nullable = false) 
     private String role; 
+
+    @Column(name = "profile_image") // プロフィール画像
+    private String profileImage;
+
+    @Column(name = "gender", length = 10) // 性別(男性、女性など)
+    private String gender;
+
+    @Column(name = "age") // 年齢
+    private Integer age;
+
+    @Size(max = 1500) // 自己紹介（255文字以内）
+    @Column(name = "self_introduction", length = 1500)
+    private String selfIntroduction;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false; // 論理削除フラグ（デフォルト false）
