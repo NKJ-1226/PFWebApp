@@ -1,10 +1,16 @@
 package com.nakajima.nkjwebapp.controller;
 
-import com.nakajima.service.UserService;
+import com.nakajima.nkjwebapp.model.Contact;
 import com.nakajima.nkjwebapp.model.UserInfo;
+import com.nakajima.nkjwebapp.service.ContactService;
+import com.nakajima.nkjwebapp.service.UserService;
+
+import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -21,6 +27,9 @@ public class AdminController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ContactService contactService;
 
     @GetMapping("/admin")
     public String adminHome() {
@@ -72,7 +81,7 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("message", "ユーザー情報を更新しました");
         redirectAttributes.addFlashAttribute("alertClass", "alert-success");
         return "redirect:/user";
-    }  
+    }
 
     @PostMapping("/user/create")
     public String createUser(
@@ -98,12 +107,12 @@ public class AdminController {
         }
 
         try {
-        userService.createUser(username, email, password, role, furigana, gender, age, selfIntroduction, imageFileName);
-        redirectAttributes.addFlashAttribute("message", "ユーザーを追加しました");
-        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+            userService.createUser(username, email, password, role, furigana, gender, age, selfIntroduction, imageFileName);
+            redirectAttributes.addFlashAttribute("message", "ユーザーを追加しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
         } catch (Exception e) {
-        redirectAttributes.addFlashAttribute("message", "ユーザーの追加に失敗しました: " + e.getMessage());
-        redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            redirectAttributes.addFlashAttribute("message", "ユーザーの追加に失敗しました: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
         return "redirect:/user";
     }
@@ -127,8 +136,40 @@ public class AdminController {
     }
 
     @GetMapping("/contact_ad")
-    public String showContactList() {
-        return "contact_ad";
+    public String showContactList(Model model) {
+        List<Contact> contacts = contactService.getAllContacts();
+        model.addAttribute("contacts", contacts);
+        return "contact_ad"; // お問い合わせ一覧画面の表示
+    }
+
+    // お問い合わせ詳細画面
+    @GetMapping("/contact_ad/{id}")
+    public String showContactDetail(@PathVariable int id, Model model) {
+        Contact contact = contactService.getContactById(id);
+        model.addAttribute("contact", contact);
+        return "contact_detail";  // 詳細画面の表示
+    }
+
+    // お問い合わせステータス更新
+    @PostMapping("/contact_ad/update_status")
+    public String updateStatus(@RequestParam int id, @RequestParam String status, RedirectAttributes redirectAttributes) {
+        contactService.updateStatus(id, status);
+        redirectAttributes.addFlashAttribute("message", "ステータスが更新されました");
+        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        return "redirect:/contact_ad";
+    }
+
+    @PostMapping("/contact_ad/save")
+    public String saveContact(@Valid @ModelAttribute Contact contact, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("message", "入力に誤りがあります");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+            return "redirect:/contact_ad";
+        }
+        contactService.saveContact(contact);
+        redirectAttributes.addFlashAttribute("message", "お問い合わせが送信されました");
+        redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        return "redirect:/contact_ad";
     }
 
     @GetMapping("/deleted_users")

@@ -36,7 +36,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         
         http.csrf(csrf -> csrf.disable())  // CSRF保護を無効化
-        .userDetailsService(userDetailsService) // ★ ここを追加！
+        .userDetailsService(userDetailsService)
         .formLogin(login -> login
             .loginProcessingUrl("/login") // ログイン処理
             .loginPage("/login") // ログインページ
@@ -50,9 +50,11 @@ public class SecurityConfig {
         ).authorizeHttpRequests(authz -> authz
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 静的リソース許可
             .requestMatchers("/").permitAll() // ホームページ許可
+            .requestMatchers("/contact_form").permitAll() // お問い合わせフォームへのアクセス許可
             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // 管理者のみアクセス可能
             .anyRequest().authenticated() // その他は認証必須
         );
+
 
         return http.build();
     }
