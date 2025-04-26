@@ -1,4 +1,4 @@
-package com.nakajima.service;
+package com.nakajima.nkjwebapp.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 //import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.nakajima.repository.UserRepository;
+import com.nakajima.nkjwebapp.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package com.nakajima.repository;
+package com.nakajima.nkjwebapp.repository;
 
 import java.util.List;
 import java.util.Optional;
