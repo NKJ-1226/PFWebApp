@@ -43,34 +43,20 @@
             <thead>
                 <tr>
                     <th>カテゴリー</th>
-                    <th>メール</th>
-                    <th>メッセージ</th>
+                    <th>メールアドレス</th>
+                    <th>お問い合わせ内容</th>
                     <th>ステータス</th>
-                    <th>詳細</th>
-                    <th>ステータス更新</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="contact : ${contacts}">
                     <td th:text="${contact.category}"></td>
                     <td th:text="${contact.email}"></td>
-                    <td th:text="${contact.message}"></td>
+                    <td th:text="${#strings.length(contact.message) <= 10} ? ${contact.message} : ${contact.message.substring(0, 10) + '...'}"></td>
                     <td th:text="${contact.status}"></td>
                     <td>
                         <a th:href="@{/contact_ad/{id}(id=${contact.id})}" class="btn btn-info btn-sm">詳細</a>
-                    </td>
-                    <td>
-                        <!-- ステータス更新フォーム -->
-                        <form th:action="@{/contact_ad/update_status}" method="post" class="d-inline">
-                            <input type="hidden" name="_csrf" value="${_csrf.token}">
-                            <input type="hidden" name="id" th:value="${contact.id}">
-                            <select name="status" class="form-select form-select-sm">
-                                <option value="未対応" th:selected="${contact.status == '未対応'}">未対応</option>
-                                <option value="対応中" th:selected="${contact.status == '対応中'}">対応中</option>
-                                <option value="対応済" th:selected="${contact.status == '対応済'}">対応済</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary btn-sm mt-2">更新</button>
-                        </form>
                     </td>
                 </tr>
             </tbody>

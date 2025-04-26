@@ -32,7 +32,6 @@ public class ContactService {
         contact.setStatus(status);
         contactRepository.save(contact);
     }
-    
 
     // お問い合わせ内容を取得
     public List<Contact> getAllContacts() {
