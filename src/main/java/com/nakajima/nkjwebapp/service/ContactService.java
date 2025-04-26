@@ -27,10 +27,12 @@ public class ContactService {
 
     // ステータスを更新
     public void updateStatus(int id, String status) {
-        Contact contact = contactRepository.findById(id).orElseThrow(() -> new RuntimeException("Contact not found with id: " + id));
+        Contact contact = contactRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Contact not found with id: " + id)); // ここ
         contact.setStatus(status);
         contactRepository.save(contact);
     }
+    
 
     // お問い合わせ内容を取得
     public List<Contact> getAllContacts() {
@@ -39,13 +41,15 @@ public class ContactService {
 
     // お問い合わせの詳細を取得
     public Contact getContactById(int id) {
-        return contactRepository.findById(id).orElseThrow(() -> new RuntimeException("Contact not found with id: " + id));
+        return contactRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Contact not found with id: " + id)); // ここ
     }
+    
 
     // 管理者に通知を送る
     public void sendNotificationToAdmin(Contact contact) {
         try {
-            MimeMessage message = mailSender.createMimeMessage(); // MimeMailMessage から MimeMessage に変更
+            MimeMessage message = mailSender.createMimeMessage(); 
             MimeMessageHelper helper = new MimeMessageHelper(message, true); // true はマルチパート対応
             helper.setTo("miyju.nkj@gmail.com"); // 管理者のメールアドレス
             helper.setSubject("新着のお問い合わせあり⇒");
