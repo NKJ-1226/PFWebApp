@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- BootstrapのJavaScript（CDN経由で読み込む） -->
-    <script src = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 
 </head>
 
@@ -30,6 +30,38 @@
                 </div>
             </div>
         </header>
+    </div>
+
+    <!-- お問い合わせ一覧のテーブル -->
+    <div class="table-responsive container mt-4 w-75">
+        <!-- 見出し -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">お問い合わせ一覧</h2>
+            <a href="/category_list" class="btn btn-success">カテゴリー一覧</a>
+        </div>
+
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>カテゴリー</th>
+                    <th>メールアドレス</th>
+                    <th>お問い合わせ内容</th>
+                    <th>ステータス</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="contact : ${contacts}">
+                    <td th:text="${contact.category}"></td>
+                    <td th:text="${contact.email}"></td>
+                    <td th:text="${#strings.length(contact.message) <= 10} ? ${contact.message} : ${contact.message.substring(0, 10) + '...'}"></td>
+                    <td th:text="${contact.status}"></td>
+                    <td>
+                        <a th:href="@{/contact_ad/{id}(id=${contact.id})}" class="btn btn-info btn-sm">詳細</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>        
     </div>
 
 </body>

@@ -43,8 +43,6 @@
                         <option th:value="ROLE_ADMIN" th:selected="${user.role == 'ROLE_ADMIN'}">管理者</option>
                     </select>
                 </li>
-
-                <!-- ▼ 追加項目 ▼ -->
                 <li class="list-group-item">
                     <label for="furigana" class="form-label">ふりがな</label>
                     <input type="text" id="furigana" name="furigana" class="form-control" th:value="${user.furigana}">

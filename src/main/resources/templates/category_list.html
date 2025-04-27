@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カテゴリ一覧</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<!-- ヘッダー部分 -->
+<div class="container mt-4">
+    <header class="mb-4 bg-light p-3 rounded">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="text-dark text-decoration-none">カテゴリ一覧</h1>
+            <div class="d-flex">
+                <!-- お問い合わせ一覧への遷移ボタン -->
+                <a href="/contact_ad" class="btn btn-primary me-2" style="font-size: 18px;">お問い合わせ一覧</a>
+            </div>
+        </div>
+    </header>
+</div>
+
+<!-- メッセージ表示（フラッシュメッセージ） -->
+<div th:if="${message}" class="alert" th:class="${alertClass}">
+    <span th:text="${message}"></span>
+</div>
+
+<!-- カテゴリの一覧を表示 -->
+<div class="table-responsive container mt-4">
+    <!-- 見出し -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">カテゴリ一覧</h2>
+        <!-- カテゴリー追加画面への遷移ボタン -->
+        <a href="/create_category" class="btn btn-success">カテゴリー追加</a>
+    </div>
+                
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>カテゴリ名</th>
+                <th>操作</th> 
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="category : ${categories}">
+                <td th:text="${category.name}"></td>
+                <td>
+                    <!-- 編集ボタン -->
+                    <a th:href="@{/category/edit/{id}(id=${category.id})}" class="btn btn-warning">編集</a>
+                    <!-- 削除ボタン -->
+                    <form th:action="@{/category/delete}" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${category.id}"/>
+                        <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                    </form>
+                </td> 
+            </tr>
+            <tr th:if="${#lists.isEmpty(categories)}">
+                <td colspan="2">カテゴリがありません</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+</body>
+</html>

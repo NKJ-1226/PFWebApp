@@ -27,7 +27,8 @@ public class ContactService {
 
     // ステータスを更新
     public void updateStatus(int id, String status) {
-        Contact contact = contactRepository.findById(id).orElseThrow(() -> new RuntimeException("Contact not found with id: " + id));
+        Contact contact = contactRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Contact not found with id: " + id)); // ここ
         contact.setStatus(status);
         contactRepository.save(contact);
     }
@@ -39,21 +40,46 @@ public class ContactService {
 
     // お問い合わせの詳細を取得
     public Contact getContactById(int id) {
-        return contactRepository.findById(id).orElseThrow(() -> new RuntimeException("Contact not found with id: " + id));
+        return contactRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Contact not found with id: " + id)); // ここ
     }
 
     // 管理者に通知を送る
     public void sendNotificationToAdmin(Contact contact) {
         try {
-            MimeMessage message = mailSender.createMimeMessage(); // MimeMailMessage から MimeMessage に変更
+            MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true); // true はマルチパート対応
-            helper.setTo("miyju.nkj@gmail.com"); // 管理者のメールアドレス
-            helper.setSubject("新着のお問い合わせあり⇒");
-            helper.setText("カテゴリー: " + contact.getCategory() + "\nメッセージ: " + contact.getMessage());
 
-            mailSender.send(message); // メール送信
-        } catch(Exception e) {
+            // 管理者のメールアドレスを環境変数から取得
+            String mailTo = System.getenv("SPRING_MAIL_USERNAME");
+            helper.setTo(mailTo); // 管理者のメールアドレス
+            helper.setSubject("新着のお問い合わせあり⇒");
+
+            // カテゴリ名を取得
+            if (contact.getCategory() == null) {
+                System.out.println("カテゴリはnullです。");
+            } else {
+                System.out.println("カテゴリID: " + contact.getCategory().getId() + ", カテゴリ名: " + contact.getCategory().getName());
+            }
+
+            // カテゴリ名を取得（未設定の場合を考慮）
+            String categoryName = (contact.getCategory() != null && contact.getCategory().getName() != null)
+                    ? contact.getCategory().getName()
+                    : "未設定"; // カテゴリが未設定の場合
+
+            System.out.println("カテゴリー名: " + categoryName);  // ログ出力を追加
+
+            // メール本文を作成
+            String messageText = "カテゴリー: " + categoryName + "\n" +
+                                 "メッセージ: " + contact.getMessage();
+
+            helper.setText(messageText);
+
+            // メール送信
+            mailSender.send(message);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

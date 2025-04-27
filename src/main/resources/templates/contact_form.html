@@ -48,12 +48,14 @@
         <form th:action="@{/contact_form}" th:object="${contact}" method="post">
             <div class="mb-3">
                 <label for="category" class="form-label">カテゴリ:</label>
-                <select id="category" name="category" class="form-select" required>
-                    <option value="質問">質問</option>
-                    <option value="意見">意見</option>
-                    <option value="不具合">不具合</option>
+                <!-- カテゴリのリストを動的に表示 -->
+                <select id="category" name="category.id" class="form-select" required>
+                    <!-- カテゴリのリストをループで表示 -->
+                    <option th:each="category : ${categories}" 
+                            th:value="${category.id}" 
+                            th:text="${category.name}"></option>
                 </select>
-            </div>
+            </div>            
 
             <div class="mb-3">
                 <label for="message" class="form-label">メッセージ:</label>
