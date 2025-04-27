@@ -1,11 +1,6 @@
 package com.nakajima.nkjwebapp.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -24,10 +19,9 @@ public class Contact {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotBlank(message = "カテゴリーは必須です")
-    @Size(max = 255, message = "カテゴリーは最大255文字までです")
-    @Column(nullable = false)
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;  // Categoryエンティティとの紐付け！
 
     @NotBlank(message = "メッセージは必須です")
     @Size(max = 1000, message = "メッセージは最大1000文字までです")

@@ -1,12 +1,12 @@
 package com.nakajima.nkjwebapp.controller;
 
+import com.nakajima.nkjwebapp.model.Category;
 import com.nakajima.nkjwebapp.model.Contact;
 import com.nakajima.nkjwebapp.model.UserInfo;
+import com.nakajima.nkjwebapp.service.CategoryService;
 import com.nakajima.nkjwebapp.service.ContactService;
 import com.nakajima.nkjwebapp.service.UserService;
-
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
 import java.io.IOException;
-import java.nio.file.*;
 import java.util.List;
 
 @Controller
@@ -30,6 +28,9 @@ public class AdminController {
 
     @Autowired
     private ContactService contactService;
+
+    @Autowired
+    private CategoryService categoryService;
 
     @GetMapping("/admin")
     public String adminHome() {
@@ -172,6 +173,80 @@ public class AdminController {
         return "redirect:/contact_ad";
     }
 
+    // カテゴリー作成
+    @PostMapping("/admin/category/save")
+    public String createCategory(@RequestParam String name, RedirectAttributes redirectAttributes) {
+        try {
+            categoryService.createCategory(name);
+            redirectAttributes.addFlashAttribute("message", "カテゴリを作成しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "カテゴリの作成に失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/category_list";
+    }
+
+    // カテゴリーリスト表示
+    @GetMapping("/category_list")
+    public String showCategoryList(Model model) {
+        try {
+            List<Category> categories = categoryService.getAllCategories();
+            model.addAttribute("categories", categories);
+        } catch (Exception e) {
+            model.addAttribute("message", "カテゴリの取得に失敗しました");
+            model.addAttribute("alertClass", "alert-danger");
+        }
+        return "category_list";  // category_list.htmlを返す
+    }
+
+    // カテゴリー削除
+    @PostMapping("/category/delete")
+    public String deleteCategory(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            categoryService.deleteCategory(id);
+            redirectAttributes.addFlashAttribute("message", "カテゴリを削除しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "カテゴリの削除に失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/category_list";
+    }
+
+    // カテゴリー編集フォーム表示
+    @GetMapping("/category/edit/{id}")
+    public String editCategory(@PathVariable Integer id, Model model) {
+        Category category = categoryService.getCategoryById(id);
+        if (category != null) {
+            model.addAttribute("category", category);  // モデルにカテゴリ情報を追加
+            return "edit_category";  // edit_category.htmlを返す
+        } else {
+            // カテゴリが存在しない場合
+            return "redirect:/category_list";  // カテゴリ一覧にリダイレクト
+        }
+    }
+
+
+    // カテゴリー編集処理
+    @PostMapping("/category/update")
+    public String updateCategory(@RequestParam Integer id, @RequestParam String name, RedirectAttributes redirectAttributes) {
+        try {
+            categoryService.updateCategory(id, name);  // name 引数を追加
+            redirectAttributes.addFlashAttribute("message", "カテゴリを更新しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "カテゴリの更新に失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/category_list";
+    }
+
+    @GetMapping("/create_category")
+    public String showCreateCategoryForm(Model model) {
+        return "create_category";  // create_category.html を返す
+    }
+    
     @GetMapping("/deleted_users")
     public String showDeletedUsers(Model model) {
         List<UserInfo> deletedUsers = userService.getDeletedUsers();
