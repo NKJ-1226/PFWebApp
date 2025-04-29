@@ -51,6 +51,7 @@ public class SecurityConfig {
             .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 静的リソース許可
             .requestMatchers("/").permitAll() // ホームページ許可
             .requestMatchers("/contact_form").permitAll() // お問い合わせフォームへのアクセス許可
+            .requestMatchers("/profile/**").permitAll() // お問い合わせフォームへのアクセス許可
             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // 管理者のみアクセス可能
             .anyRequest().authenticated() // その他は認証必須
         );

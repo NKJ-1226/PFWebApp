@@ -1,13 +1,11 @@
 package com.nakajima.nkjwebapp.service;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.nakajima.nkjwebapp.model.UserInfo;
 import com.nakajima.nkjwebapp.repository.UserRepository;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +14,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.IOException;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 
 
 @Service
@@ -69,14 +69,15 @@ public class UserService {
         userRepository.save(newUser);
     }
 
-
     // ユーザー情報を更新
     @Transactional
     public void updateUser(Integer id, String username, String email, String role,
                             String furigana, String gender, Integer age,
                             String selfIntroduction, String profileImage) {
+        System.out.println("Attempting to find user with ID: " + id);
         UserInfo user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ユーザーが見つかりません"));
+        System.out.println("Found user: " + user.getUsername());  // 追加: ユーザー名を表示
 
         if (user.isDeleted()) {
             throw new RuntimeException("削除されたユーザーは更新できません");
@@ -90,9 +91,19 @@ public class UserService {
         user.setAge(age);
         user.setSelfIntroduction(selfIntroduction);
         if (profileImage != null && !profileImage.isEmpty()) {
-        user.setProfileImage(profileImage);
+            user.setProfileImage(profileImage);
         }
+
+        System.out.println("Updating user: " + user.getUsername());
+
         userRepository.save(user);
+    }
+
+
+    // ユーザー情報を更新(プロフィールを更新した時)
+    public UserInfo findById(int id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ユーザーが見つかりません"));
     }
 
     // ユーザーを論理削除
@@ -226,23 +237,42 @@ public class UserService {
         return userRepository.findByIsDeletedFalse(pageable); // 論理削除されていないユーザーのみ
     }
 
-    // 画像ファイルのアップロード処理
+    // アップロードディレクトリの設定をプロパティファイルから読み込む
+    @Value("${upload.dir:C:/WorkSpace/PF_NAKAJIMA/nkjwebapp/uploads/}")
+    private String uploadDir;
+
+    // ユーザーのプロフィール画像を保存する処理
     public String saveProfileImage(MultipartFile profileImage) throws IOException {
         if (profileImage != null && !profileImage.isEmpty()) {
-            String uploadDir = "src/main/resources/static/uploads/";
-            String imageFileName = profileImage.getOriginalFilename();
+            // ユーザーごとに一意なファイル名を生成（UUIDを使用）
+            String fileExtension = getFileExtension(profileImage.getOriginalFilename());
+            String uniqueFileName = "user_" + UUID.randomUUID().toString() + fileExtension;
+
+            // 保存先ディレクトリを作成
             Path uploadPath = Paths.get(uploadDir);
-    
             if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+                Files.createDirectories(uploadPath);  // ディレクトリが存在しない場合、作成する
             }
-    
-            Path filePath = uploadPath.resolve(imageFileName);
+
+            // 画像ファイルの保存パス
+            Path filePath = uploadPath.resolve(uniqueFileName);
+
+            // ファイルを保存
             profileImage.transferTo(filePath.toFile());
-    
-            return imageFileName;
+
+            // 保存した画像のパスを返す（Webアクセス用）
+            return "/uploads/" + uniqueFileName; // ブラウザからアクセスできるパスを返す
         }
         return null;
     }
+
+    // ファイルの拡張子を取得するヘルパーメソッド
+    private String getFileExtension(String filename) {
+        if (filename != null && filename.contains(".")) {
+            return filename.substring(filename.lastIndexOf("."));
+        }
+        return "";  // 拡張子が無い場合は空文字
+    }  
+
  
 }

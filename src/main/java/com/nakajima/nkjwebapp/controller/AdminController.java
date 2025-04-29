@@ -32,6 +32,9 @@ public class AdminController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private ProfileController profileController;
+
     @GetMapping("/admin")
     public String adminHome() {
         return "admin";
@@ -318,4 +321,5 @@ public class AdminController {
         }
         return "redirect:/user";
     }
+    
 }
