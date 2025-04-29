@@ -10,8 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // ここで静的リソースの設定をする
-        registry.addResourceHandler("/images/**")
-                .addResourceLocations("file:uploads");
+        registry.addResourceHandler("/uploads/**")  // アクセスURLとして"/uploads/**"を使う
+                .addResourceLocations("file:/C:/WorkSpace/PF_NAKAJIMA/nkjwebapp/uploads/");  // 実際のアップロードディレクトリのフルパス
     }
 }
-

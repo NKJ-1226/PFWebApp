@@ -1,0 +1,72 @@
+<!DOCTYPE html> 
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロフィール編集画面</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- ヘッダー部分 -->
+    <header class="bg-white shadow-sm py-3 mb-4">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h4 m-0">プロフィール編集</h1>
+            <a href="/profile" class="btn btn-outline-secondary btn-sm">プロフィール画面に戻る</a>
+        </div>
+    </header>
+
+    <main class="d-flex justify-content-center align-items-center min-vh-100">
+        <div class="container" style="max-width: 600px;">
+            <form th:if="${user != null}" th:action="@{/profile/edit}" th:object="${user}" method="post" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="mb-3">
+                    <label class="form-label">ユーザー名:</label>
+                    <input type="text" th:field="*{username}" class="form-control" required />
+                </div>
+            
+                <div class="mb-3">
+                    <label class="form-label">ふりがな:</label>
+                    <input type="text" th:field="*{furigana}" class="form-control" />
+                </div>
+            
+                <div class="mb-3">
+                    <label class="form-label">メールアドレス:</label>
+                    <input type="email" th:field="*{email}" class="form-control" required />
+                </div>
+            
+                <div class="mb-3">
+                    <label class="form-label">性別:</label>
+                    <select th:field="*{gender}" class="form-select">
+                        <option value="">選択してください</option>
+                        <option value="男性">男性</option>
+                        <option value="女性">女性</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+            
+                <div class="mb-3">
+                    <label class="form-label">年齢:</label>
+                    <input type="number" th:field="*{age}" class="form-control" min="0" />
+                </div>
+            
+                <div class="mb-3">
+                    <label class="form-label">自己紹介:</label>
+                    <textarea th:field="*{selfIntroduction}" rows="5" class="form-control"></textarea>
+                </div>
+            
+                <div class="mb-3">
+                    <label class="form-label">プロフィール画像:</label>
+                    <input type="file" name="profileImageFile" class="form-control" />
+                </div>
+            
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">保存する</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>
