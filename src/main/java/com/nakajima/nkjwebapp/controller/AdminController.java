@@ -149,10 +149,31 @@ public class AdminController {
     // お問い合わせ詳細画面
     @GetMapping("/contact_ad/{id}")
     public String showContactDetail(@PathVariable int id, Model model) {
+        // お問い合わせ情報を取得
         Contact contact = contactService.getContactById(id);
-        model.addAttribute("contact", contact);
+
+        // メッセージを30文字ごとに改行タグを挿入
+        String formattedMessage = formatMessage(contact.getMessage());
+        contact.setMessage(formattedMessage);  // フォーマット後のメッセージをセット
+
+        model.addAttribute("contact", contact);  // 変換したお問い合わせをモデルに追加
         return "contact_detail";  // 詳細画面の表示
     }
+
+    // メッセージを30文字ごとに改行するメソッド
+    private String formatMessage(String message) {
+        StringBuilder formattedMessage = new StringBuilder();
+        int length = message.length();
+
+        // 30文字ごとに改行を挿入
+        for (int i = 0; i < length; i += 30) {
+            int end = Math.min(i + 30, length);
+            formattedMessage.append(message.substring(i, end)).append("<br />");
+        }
+
+        return formattedMessage.toString();
+    }
+
 
     // お問い合わせステータス更新
     @PostMapping("/contact_ad/update_status")
@@ -174,6 +195,56 @@ public class AdminController {
         redirectAttributes.addFlashAttribute("message", "お問い合わせが送信されました");
         redirectAttributes.addFlashAttribute("alertClass", "alert-success");
         return "redirect:/contact_ad";
+    }
+
+    // お問い合わせの論理削除
+    @PostMapping("/contact_ad/delete")
+    public String deleteContact(@RequestParam int id, RedirectAttributes redirectAttributes) {
+        try {
+            contactService.deleteContact(id);
+            redirectAttributes.addFlashAttribute("message", "お問い合わせを削除しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "お問い合わせの削除に失敗しました: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/contact_ad";
+    }
+
+    // お問い合わせの物理削除
+    @PostMapping("/contact/delete/physical")
+    public String deleteContactPhysically(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        boolean result = contactService.deleteContactPhysically(id);
+        if (result) {
+            redirectAttributes.addFlashAttribute("message", "お問い合わせを完全に削除しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "削除に失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/deleted_contacts";
+    }
+
+    // 削除済みのお問い合わせの復元
+    @PostMapping("/contact/restore")
+    public String restoreContact(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        boolean result = contactService.restoreContact(id);
+        if (result) {
+            redirectAttributes.addFlashAttribute("message", "お問い合わせを復元しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-success");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "復元に失敗しました");
+            redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
+        }
+        return "redirect:/deleted_contacts";
+    }
+
+    // 削除済みのお問い合わせ一覧表示
+    @GetMapping("/deleted_contacts")
+    public String showDeletedContacts(Model model) {
+        List<Contact> deletedContacts = contactService.getDeletedContacts(); // 削除済みのみ取得
+        model.addAttribute("deletedContacts", deletedContacts);
+        return "deleted_contacts";
     }
 
     // カテゴリー作成

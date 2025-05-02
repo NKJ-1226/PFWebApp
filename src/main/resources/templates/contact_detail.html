@@ -47,8 +47,10 @@
             </tr>
             <tr>
                 <th scope="row">お問い合わせ内容</th>
-                <td th:text="${contact.message}"></td>
-            </tr>
+                <td>
+                    <span th:utext="${contact.message}"></span>
+                </td>                                
+            </tr>            
             <tr>
                 <th scope="row">ステータス</th>
                 <td th:text="${contact.status}"></td>
