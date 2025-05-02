@@ -35,4 +35,7 @@ public class Contact {
     @Email(message = "有効なメールアドレスを入力してください")
     @Column(nullable = false)
     private String email; // お問い合わせの送信者メールアドレス
+
+    @Column(nullable = false)
+    private boolean deleted =false;
 }

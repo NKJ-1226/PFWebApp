@@ -4,7 +4,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.nakajima.nkjwebapp.model.Like;
 import com.nakajima.nkjwebapp.model.UserInfo;
+import com.nakajima.nkjwebapp.repository.LikeRepository;
 import com.nakajima.nkjwebapp.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +27,9 @@ public class UserService {
     
     @Autowired
     private final UserRepository userRepository;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
     // 削除されていない全ユーザーを取得
     public List<UserInfo> getAllUsers() {
@@ -274,5 +280,28 @@ public class UserService {
         return "";  // 拡張子が無い場合は空文字
     }  
 
+    //いいね処理
+    @Transactional
+    public void likeUser(Integer fromUserId, Integer toUserId) {
+        if (!likeRepository.existsByFromUserIdAndToUserId(fromUserId, toUserId)) {
+            Like like = new Like();
+            like.setFromUserId(fromUserId);
+            like.setToUserId(toUserId);
+            likeRepository.save(like);
+        }
  
+    }
+
+    // いいねの数を取得
+    public int getLikeCount(Integer userId) {
+        return likeRepository.countByToUserId(userId); // toUserIdがそのユーザーに対する「いいね」をカウント
+    }
+
+    // 現在のユーザーがそのユーザーに「いいね」したか確認する
+    public boolean hasUserLiked(Integer fromUserId, Integer toUserId) {
+        return likeRepository
+        .existsByFromUserIdAndToUserId(fromUserId, toUserId);
+    }
+
+    
 }

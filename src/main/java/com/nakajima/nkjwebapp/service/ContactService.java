@@ -33,15 +33,52 @@ public class ContactService {
         contactRepository.save(contact);
     }
 
-    // お問い合わせ内容を取得
+    // お問い合わせ内容を取得(削除されたものは表示させない)
     public List<Contact> getAllContacts() {
-        return contactRepository.findAll();
+        return contactRepository.findByDeletedFalse();
     }
 
     // お問い合わせの詳細を取得
     public Contact getContactById(int id) {
         return contactRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Contact not found with id: " + id)); // ここ
+    }
+
+    //お問い合わせの論理削除
+    public void deleteContact(int id) {
+        Contact contact = contactRepository.findByIdAndDeletedFalse(id)
+            .orElseThrow(() -> new RuntimeException("Contact not found or already deleted with id: " + id));
+        contact.setDeleted(true);
+        contactRepository.save(contact);
+    }
+
+    //お問い合わせの物理削除
+    public boolean deleteContactPhysically(Integer id) {
+        try {
+            contactRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // 削除済みのお問い合わせの復元
+    public boolean restoreContact(Integer id) {
+        try {
+            Contact contact = contactRepository.findById(id).orElse(null);
+            if (contact == null) return false;
+
+            contact.setDeleted(false); // 復元
+            contactRepository.save(contact);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    //削除済みお問い合わせの一覧表示
+    public List<Contact> getDeletedContacts() {
+        return contactRepository.findByDeletedTrue();
     }
 
     // 管理者に通知を送る
