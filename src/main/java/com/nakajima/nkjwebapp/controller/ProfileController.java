@@ -55,7 +55,7 @@ public class ProfileController {
         userService.updateUser(
             userInfo.getId(),
             formUser.getUsername(),
-            formUser.getEmail(),
+            userInfo.getEmail(),
             userInfo.getRole(),
             formUser.getFurigana(),
             formUser.getGender(),
