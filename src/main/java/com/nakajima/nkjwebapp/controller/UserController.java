@@ -52,11 +52,18 @@ public class UserController {
         return "user_detail"; 
     }
 
-
     // いいね処理
     @PostMapping("/{id}/like")
     public String likeUser(@PathVariable Integer id, @AuthenticationPrincipal UserInfo currentUser) {
         userService.likeUser(currentUser.getId(), id);
         return "redirect:/detail/" + id;
+    }
+
+    // 月間いいね数でランキング表示
+    @GetMapping("/like_ranking")
+    public String getMonthlyRankings(Model model) {
+        List<UserInfo> rankedUsers = userService.getUserRankedByLikesThisMonth();
+        model.addAttribute("rankedUsers", rankedUsers);
+        return "like_ranking"; 
     }
 }

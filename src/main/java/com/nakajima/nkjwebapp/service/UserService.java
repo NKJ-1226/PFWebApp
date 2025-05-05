@@ -1,12 +1,15 @@
 package com.nakajima.nkjwebapp.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.nakajima.nkjwebapp.model.Like;
 import com.nakajima.nkjwebapp.model.UserInfo;
+import com.nakajima.nkjwebapp.repository.LikeCountProjection;
 import com.nakajima.nkjwebapp.repository.LikeRepository;
 import com.nakajima.nkjwebapp.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -303,5 +306,24 @@ public class UserService {
         .existsByFromUserIdAndToUserId(fromUserId, toUserId);
     }
 
-    
+    // 月間いいね数でランキング形式でユーザーを取得
+    public List<UserInfo> getUserRankedByLikesThisMonth() {
+        List<Map<String, Object>> topLikedUsers = likeRepository.findTopLikedUsersThisMonth();
+
+        List<UserInfo> rankedUsers = new ArrayList<>();
+
+        for (Map<String, Object> likeCountData : topLikedUsers) {
+            Integer userId = (Integer) likeCountData.get("userId");
+            Long likeCount = (Long) likeCountData.get("likeCount");
+
+            userRepository.findById(userId).ifPresent(user -> {
+                if (!user.isDeleted()) {
+                    user.setLikeCount(likeCount.intValue()); // 月間のいいね数をセット
+                    rankedUsers.add(user);
+                }
+            });
+        }
+
+        return rankedUsers;
+    }
 }
