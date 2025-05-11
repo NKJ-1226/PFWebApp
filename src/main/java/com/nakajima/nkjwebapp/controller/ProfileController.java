@@ -46,25 +46,30 @@ public class ProfileController {
         @AuthenticationPrincipal UserInfo userInfo,
         @ModelAttribute UserInfo formUser,
         @RequestParam(value = "profileImageFile", required = false) MultipartFile profileImageFile,
+        @RequestParam(value = "newPassword", required = false) String newPassword,
         Model model
     ) throws IOException {
-        // プロフィール画像の保存処理
+
         String savedProfileImage = userService.saveProfileImage(profileImageFile);
 
-        // ユーザー情報を更新
+        // 新しいパスワードが指定されていれば、それを使い、なければ現状のパスワードを使う
+        String passwordToUse = (newPassword != null && !newPassword.isBlank()) ? newPassword : userInfo.getPassword();
+
+        // ユーザー情報を更新（メールアドレスとパスワード含む）
         userService.updateUser(
             userInfo.getId(),
             formUser.getUsername(),
-            userInfo.getEmail(),
+            formUser.getEmail(), 
             userInfo.getRole(),
             formUser.getFurigana(),
             formUser.getGender(),
             formUser.getAge(),
+            passwordToUse, 
             formUser.getSelfIntroduction(),
             savedProfileImage != null ? savedProfileImage : userInfo.getProfileImage()
         );
 
-        // 更新後のユーザー情報を取得し、セッション内の認証情報を更新
+        // 認証情報を更新
         UserInfo updatedUser = userService.findById(userInfo.getId());
         UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
             updatedUser,
@@ -75,4 +80,5 @@ public class ProfileController {
 
         return "redirect:/profile";
     }
+
 }
