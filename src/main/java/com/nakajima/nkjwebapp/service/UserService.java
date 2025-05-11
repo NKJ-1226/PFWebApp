@@ -81,12 +81,14 @@ public class UserService {
     // ユーザー情報を更新
     @Transactional
     public void updateUser(Integer id, String username, String email, String role,
-                            String furigana, String gender, Integer age,
-                            String selfIntroduction, String profileImage) {
+                        String furigana, String gender, Integer age,
+                        String password, 
+                        String selfIntroduction, String profileImage) {
+
         System.out.println("Attempting to find user with ID: " + id);
         UserInfo user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("ユーザーが見つかりません"));
-        System.out.println("Found user: " + user.getUsername());  // 追加: ユーザー名を表示
+        System.out.println("Found user: " + user.getUsername());
 
         if (user.isDeleted()) {
             throw new RuntimeException("削除されたユーザーは更新できません");
@@ -99,8 +101,14 @@ public class UserService {
         user.setGender(gender);
         user.setAge(age);
         user.setSelfIntroduction(selfIntroduction);
+
         if (profileImage != null && !profileImage.isEmpty()) {
             user.setProfileImage(profileImage);
+        }
+
+        // パスワードを保存
+        if (password != null && !password.isBlank()) {
+            user.setPassword(password); 
         }
 
         System.out.println("Updating user: " + user.getUsername());

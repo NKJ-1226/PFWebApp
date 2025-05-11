@@ -25,6 +25,16 @@
                     <label class="form-label">ユーザー名:</label>
                     <input type="text" th:field="*{username}" class="form-control" required />
                 </div>
+
+                <div class="mb-3">
+                    <label class="form-label">メールアドレス:</label>
+                    <input type="email" th:field="*{email}" class="form-control" required />
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">新しいパスワード（変更したい場合）:</label>
+                    <input type="password" name="newPassword" class="form-control" />
+                </div>
             
                 <div class="mb-3">
                     <label class="form-label">ふりがな:</label>

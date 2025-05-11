@@ -68,6 +68,7 @@ public class AdminController {
         @RequestParam(required = false) String furigana,
         @RequestParam(required = false) String gender,
         @RequestParam(required = false) Integer age,
+        @RequestParam(required = false) String password, 
         @RequestParam(required = false) String selfIntroduction,
         @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
         RedirectAttributes redirectAttributes) {
@@ -81,11 +82,18 @@ public class AdminController {
             return "redirect:/user";
         }
 
-        userService.updateUser(id, username, email, role, furigana, gender, age, selfIntroduction, imageFileName);
+        userService.updateUser(
+            id, username, email, role,
+            furigana, gender, age,
+            password, 
+            selfIntroduction, imageFileName
+        );
+
         redirectAttributes.addFlashAttribute("message", "ユーザー情報を更新しました");
         redirectAttributes.addFlashAttribute("alertClass", "alert-success");
         return "redirect:/user";
     }
+
 
     @PostMapping("/user/create")
     public String createUser(
