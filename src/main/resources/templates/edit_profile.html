@@ -9,14 +9,15 @@
 <body class="bg-light">
 
     <!-- ヘッダー部分 -->
-    <header class="bg-white shadow-sm py-3 mb-4">
-        <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="h4 m-0">プロフィール編集</h1>
-            <a href="/profile" class="btn btn-outline-secondary btn-sm">プロフィール画面に戻る</a>
-        </div>
-    </header>
+    <div class="container mt-4 w-75">
+        <header class="mb-4 bg-light p-3 rounded">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h4 m-0">プロフィール編集</h1>
+                <a href="/profile" class="btn btn-outline-secondary btn-sm">プロフィール画面に戻る</a>
+            </div>
+        </header>
+    </div>
 
-    <main class="d-flex justify-content-center align-items-center min-vh-100">
         <div class="container" style="max-width: 600px;">
             <form th:if="${user != null}" th:action="@{/profile/edit}" th:object="${user}" method="post" enctype="multipart/form-data" class="bg-white p-4 rounded shadow-sm">
                 <input type="hidden" th:field="*{id}" />
@@ -71,7 +72,6 @@
                 </div>
             </form>
         </div>
-    </main>
 
 </body>
 </html>

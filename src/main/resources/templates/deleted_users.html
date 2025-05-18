@@ -21,7 +21,7 @@
                 <h1 class="text-dark text-decoration-none">削除済みアカウント一覧</h1>
                 <div class="d-flex">
                     <!-- admin.html への遷移ボタン -->
-                    <a href="/admin" class="btn btn-primary me-2" style="font-size: 18px;">トップメニューへ</a>
+                    <a href="/user" class="btn btn-secondary me-2" style="font-size: 18px;">一覧へ戻る</a>
                     <!-- ログアウトボタン -->
                     <form id="logout-form" th:action="@{/logout}" method="post">
                         <input type="hidden" name="_csrf" value="${_csrf.token}"> 

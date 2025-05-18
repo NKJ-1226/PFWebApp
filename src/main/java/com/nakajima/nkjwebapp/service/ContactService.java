@@ -28,7 +28,7 @@ public class ContactService {
     // ステータスを更新
     public void updateStatus(int id, String status) {
         Contact contact = contactRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Contact not found with id: " + id)); // ここ
+            .orElseThrow(() -> new RuntimeException("Contact not found with id: " + id)); 
         contact.setStatus(status);
         contactRepository.save(contact);
     }
@@ -41,7 +41,7 @@ public class ContactService {
     // お問い合わせの詳細を取得
     public Contact getContactById(int id) {
         return contactRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Contact not found with id: " + id)); // ここ
+            .orElseThrow(() -> new RuntimeException("Contact not found with id: " + id)); 
     }
 
     //お問い合わせの論理削除

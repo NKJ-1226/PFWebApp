@@ -18,7 +18,6 @@
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="text-dark text-decoration-none">削除済みお問い合わせ一覧</h1>
                 <div class="d-flex">
-                    <a href="/admin" class="btn btn-primary me-2" style="font-size: 18px;">トップメニューへ</a>
                     <form id="logout-form" th:action="@{/logout}" method="post">
                         <input type="hidden" name="_csrf" value="${_csrf.token}">
                         <button type="submit" class="btn btn-dark" style="font-size: 18px;">ログアウト</button>

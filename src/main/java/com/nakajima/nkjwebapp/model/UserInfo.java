@@ -66,6 +66,12 @@ public class UserInfo implements UserDetails {
     @Column(name = "is_locked", nullable = false)
     private boolean isLocked = false; // アカウントロック（アクセス禁止）フラグ
 
+    private int likeCountThisMonth;
+    
+    private int likeCountThisYear;
+
+// getter / setter を追加
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));

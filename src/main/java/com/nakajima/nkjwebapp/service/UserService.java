@@ -255,7 +255,8 @@ public class UserService {
     }
 
     // アップロードディレクトリの設定をプロパティファイルから読み込む
-    @Value("${upload.dir:C:/WorkSpace/PF_NAKAJIMA/nkjwebapp/uploads/}")
+    // @Value("${upload.dir:/WorkSpace/PF_NAKAJIMA/nkjwebapp/uploads/}")
+    @Value("${upload.dir:../../../../../../uploads/}")
     private String uploadDir;
 
     // ユーザーのプロフィール画像を保存する処理
@@ -283,7 +284,7 @@ public class UserService {
         return null;
     }
 
-    // ファイルの拡張子を取得するヘルパーメソッド
+    // ファイルの拡張子を取得するメソッド
     private String getFileExtension(String filename) {
         if (filename != null && filename.contains(".")) {
             return filename.substring(filename.lastIndexOf("."));
@@ -314,7 +315,7 @@ public class UserService {
         .existsByFromUserIdAndToUserId(fromUserId, toUserId);
     }
 
-    // 月間いいね数でランキング形式でユーザーを取得
+    // 月間いいね数でランキング形式で「一般ユーザーのみ」取得
     public List<UserInfo> getUserRankedByLikesThisMonth() {
         List<Map<String, Object>> topLikedUsers = likeRepository.findTopLikedUsersThisMonth();
 
@@ -325,13 +326,32 @@ public class UserService {
             Long likeCount = (Long) likeCountData.get("likeCount");
 
             userRepository.findById(userId).ifPresent(user -> {
-                if (!user.isDeleted()) {
-                    user.setLikeCount(likeCount.intValue()); // 月間のいいね数をセット
+                if (!user.isDeleted() && "ROLE_USER".equals(user.getRole())) { 
+                    user.setLikeCount(likeCount.intValue());
                     rankedUsers.add(user);
                 }
             });
         }
+        return rankedUsers;
+    }
 
+    // 年間いいね数でランキング形式で「一般ユーザーのみ」取得
+    public List<UserInfo> getUserRankedByLikesThisYear() {
+        List<Map<String, Object>> topLikedUsers = likeRepository.findTopLikedUsersThisYear();
+
+        List<UserInfo> rankedUsers = new ArrayList<>();
+
+        for (Map<String, Object> likeCountData : topLikedUsers) {
+            Integer userId = (Integer) likeCountData.get("userId");
+            Long likeCount = (Long) likeCountData.get("likeCount");
+
+            userRepository.findById(userId).ifPresent(user -> {
+                if (!user.isDeleted() && "ROLE_USER".equals(user.getRole())) { 
+                    user.setLikeCount(likeCount.intValue());
+                    rankedUsers.add(user);
+                }
+            });
+        }
         return rankedUsers;
     }
 }

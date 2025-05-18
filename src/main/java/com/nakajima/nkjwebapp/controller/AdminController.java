@@ -36,9 +36,18 @@ public class AdminController {
     private ProfileController profileController;
 
     @GetMapping("/admin")
-    public String adminHome() {
+    public String showTopPage(Model model) {
+        // 月間ランキング
+        List<UserInfo> rankedUsersThisMonth = userService.getUserRankedByLikesThisMonth();
+        model.addAttribute("rankedUsersThisMonth", rankedUsersThisMonth);
+
+        // 年間ランキング
+        List<UserInfo> rankedUsersThisYear = userService.getUserRankedByLikesThisYear();
+        model.addAttribute("rankedUsersThisYear", rankedUsersThisYear);
+
         return "admin";
     }
+
 
     // アカウント一覧&ページネーション対応
     @GetMapping("/user")

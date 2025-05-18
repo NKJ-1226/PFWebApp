@@ -18,7 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
-    // コンストラクタインジェクション（推奨）
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
