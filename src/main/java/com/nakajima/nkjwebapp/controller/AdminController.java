@@ -168,29 +168,9 @@ public class AdminController {
     public String showContactDetail(@PathVariable int id, Model model) {
         // お問い合わせ情報を取得
         Contact contact = contactService.getContactById(id);
-
-        // メッセージを30文字ごとに改行タグを挿入
-        String formattedMessage = formatMessage(contact.getMessage());
-        contact.setMessage(formattedMessage);  // フォーマット後のメッセージをセット
-
         model.addAttribute("contact", contact);  // 変換したお問い合わせをモデルに追加
         return "contact_detail";  // 詳細画面の表示
     }
-
-    // メッセージを30文字ごとに改行するメソッド
-    private String formatMessage(String message) {
-        StringBuilder formattedMessage = new StringBuilder();
-        int length = message.length();
-
-        // 30文字ごとに改行を挿入
-        for (int i = 0; i < length; i += 30) {
-            int end = Math.min(i + 30, length);
-            formattedMessage.append(message.substring(i, end)).append("<br />");
-        }
-
-        return formattedMessage.toString();
-    }
-
 
     // お問い合わせステータス更新
     @PostMapping("/contact_ad/update_status")

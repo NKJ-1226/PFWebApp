@@ -48,7 +48,7 @@
             <tr>
                 <th scope="row">お問い合わせ内容</th>
                 <td>
-                    <span th:utext="${contact.message}"></span>
+                     <pre th:text="${#strings.replace(#strings.replace(contact.message, '\r\n', '<br/>'), '\n', '<br/>')}"></pre>
                 </td>                                
             </tr>            
             <tr>
