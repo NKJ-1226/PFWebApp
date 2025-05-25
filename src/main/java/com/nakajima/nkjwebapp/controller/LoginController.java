@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 import com.nakajima.nkjwebapp.service.UserService;
 import com.nakajima.nkjwebapp.model.UserInfo;
@@ -24,10 +26,13 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String login(Model model) {
-        model.addAttribute("userForm", new UserInfo());
-        return "login"; // ログインページの表示
+    public String login(@RequestParam(value = "error", required = false) String error, Model model) {
+        if (error != null) {
+            model.addAttribute("loginError", true);
+        }
+        return "login";
     }
+
 
     // 認証されていない場合はログイン画面にリダイレクト
     @GetMapping("/")
