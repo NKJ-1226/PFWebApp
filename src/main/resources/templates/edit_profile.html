@@ -54,12 +54,14 @@
             
                 <div class="mb-3">
                     <label class="form-label">年齢:</label>
-                    <input type="number" th:field="*{age}" class="form-control" min="0" />
+                    <input type="number" id="age" name="age" class="form-control" min="0" max="999" th:value="${user.age}">
                 </div>
             
                 <div class="mb-3">
                     <label class="form-label">自己紹介:</label>
-                    <textarea th:field="*{selfIntroduction}" rows="5" class="form-control"></textarea>
+                    <textarea id="selfIntroduction" name="selfIntroduction" class="form-control" rows="4"
+                            th:text="${user.selfIntroduction}"></textarea>
+                    <div id="selfIntroductionError" class="text-danger" style="display: none;">自己紹介は1500文字以内で入力してください。</div>
                 </div>
             
                 <div class="mb-3">
@@ -72,6 +74,19 @@
                 </div>
             </form>
         </div>
+
+        <script>
+            const textarea = document.getElementById("selfIntroduction");
+            const errorDiv = document.getElementById("selfIntroductionError");
+
+            textarea.addEventListener("input", () => {
+                if (textarea.value.length > 1500) {
+                    errorDiv.style.display = "block";
+                } else {
+                    errorDiv.style.display = "none";
+                }
+            });
+        </script>
 
 </body>
 </html>

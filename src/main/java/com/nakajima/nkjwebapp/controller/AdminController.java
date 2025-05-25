@@ -252,7 +252,7 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("message", "カテゴリを作成しました");
             redirectAttributes.addFlashAttribute("alertClass", "alert-success");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "カテゴリの作成に失敗しました");
+            redirectAttributes.addFlashAttribute("message", "カテゴリの作成に失敗しました※255文字以内で入力してください");
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
         return "redirect:/category_list";
@@ -307,7 +307,7 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("message", "カテゴリを更新しました");
             redirectAttributes.addFlashAttribute("alertClass", "alert-success");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "カテゴリの更新に失敗しました");
+            redirectAttributes.addFlashAttribute("message", "カテゴリの更新に失敗しました※255文字以内で入力してください");
             redirectAttributes.addFlashAttribute("alertClass", "alert-danger");
         }
         return "redirect:/category_list";
