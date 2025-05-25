@@ -22,11 +22,10 @@
     <div class="wrapper">
         <form th:action="@{/login}" method="post" name="Login_Form" class="form-signin">
 
-            <!-- ログイン失敗時のエラーメッセージ -->
-            <div th:if="${param.error}">
+            <div th:if="${loginError}">
                 ユーザーIDかパスワードが違います！
             </div>
-            
+
             <!-- ログアウト成功時のメッセージ -->
             <div th:if="${param.logout}">
                 <p>ログアウトしました。</p>
