@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>削除済みお問い合わせ一覧</title>
+
+    <!-- Bootstrap 5 のCSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- BootstrapのJavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+</head>
+
+<body>
+    <!-- ヘッダー部分 -->
+    <div class="container mt-4">
+        <header class="mb-4 bg-light p-3 rounded">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="text-dark text-decoration-none">削除済みお問い合わせ一覧</h1>
+                <div class="d-flex">
+                    <form id="logout-form" th:action="@{/logout}" method="post">
+                        <input type="hidden" name="_csrf" value="${_csrf.token}">
+                        <button type="submit" class="btn btn-dark" style="font-size: 18px;">ログアウト</button>
+                    </form>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <!-- 削除済みお問い合わせのテーブル -->
+    <div class="container mt-4 w-75">
+        <!-- 見出し -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">削除済みお問い合わせ一覧</h2>
+            <a href="/contact_ad" class="btn btn-success" style="font-size: 18px;">お問い合わせ一覧へ</a>
+        </div>
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>カテゴリー</th>
+                    <th>メールアドレス</th>
+                    <th>お問い合わせ内容</th>
+                    <th>ステータス</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="contact : ${deletedContacts}">
+                    <td th:text="${contact.category}"></td>
+                    <td th:text="${contact.email}"></td>
+                    <td th:text="${#strings.length(contact.message) <= 10} ? ${contact.message} : ${contact.message.substring(0, 10) + '...'}"></td>
+                    <td th:text="${contact.status}"></td>
+                    <td class="d-flex gap-2">
+                        <!-- 復元ボタン -->
+                        <form th:action="@{/contact/restore}" method="post">
+                            <input type="hidden" name="id" th:value="${contact.id}" />
+                            <button type="submit" class="btn btn-secondary btn-sm">復元</button>
+                        </form>
+                        <!-- 物理削除ボタン -->
+                        <form th:action="@{/contact/delete/physical}" method="post">
+                            <input type="hidden" name="id" th:value="${contact.id}" />
+                            <button type="submit" class="btn btn-danger btn-sm">削除</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

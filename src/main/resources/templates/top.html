@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>トップメニュー</title>
+
+    <!-- Bootstrap 5 のCSS（CDN経由で読み込む） -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- BootstrapのJavaScript（CDN経由で読み込む） -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+</head>
+<body>
+    <div class="d-flex flex-column vh-100">
+        
+        <header class="bg-light p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="text-dark text-decoration-none mb-0">トップメニュー</h1>
+                <form id="logout-form" th:action="@{/logout}" method="post">
+                    <input type="hidden" name="_csrf" value="${_csrf.token}"> 
+                    <button type="submit" class="btn btn-dark" style="font-size: 18px;">ログアウト</button>
+                </form>
+            </div>
+        </header>
+
+        
+        <div class="d-flex flex-grow-1">
+            
+            <nav class="bg-light p-3" style="width: 220px;">
+                <form th:action="@{/profile}" method="get" class="mb-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">プロフィール</button>
+                </form>
+                <form th:action="@{/user_list}" method="get" class="mb-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">タイムライン</button>
+                </form>
+            </nav>
+
+            
+            <main class="flex-grow-1 p-4 overflow-auto">
+
+                <div class="w-75">
+                    <h4 class="alert-heading" th:text="'❤️' + ${username} + 'さんのいいね件数 ❤️'">あなたのいいね件数</h4>
+                    <p>今月の獲得いいね数：<strong th:text="${thisMonthLikes}">0</strong></p>
+                    <p>今年の獲得いいね数：<strong th:text="${thisYearLikes}">0</strong></p>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

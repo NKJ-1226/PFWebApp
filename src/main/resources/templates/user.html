@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アカウント管理</title>
+    <!-- Bootstrap 5 のCSS（CDN経由で読み込む） -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- BootstrapのJavaScript（CDN経由で読み込む） -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+</head>
+
+<body>
+    <div class="d-flex flex-column vh-100">
+        <!-- ヘッダー -->
+        <header class="bg-light p-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="text-dark text-decoration-none">アカウント一覧</h1>
+                <div class="d-flex">
+                    <form id="logout-form" th:action="@{/logout}" method="post">
+                        <input type="hidden" name="_csrf" value="${_csrf.token}">
+                        <button type="submit" class="btn btn-dark" style="font-size: 18px;">ログアウト</button>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <!-- コンテンツ部分 -->
+        <div class="d-flex flex-grow-1 overflow-hidden">
+            <!-- サイドバー -->
+            <nav class="bg-light p-3" style="width: 220px; overflow-y: auto;">
+                <form th:action="@{/admin}" method="get" class="mb-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">トップメニュー</button>
+                </form>
+                <form th:action="@{/profile}" method="get" class="mb-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">プロフィール</button>
+                </form>
+                <form th:action="@{/user}" method="get" class="mb-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">アカウント管理</button>
+                </form>
+                <form th:action="@{/contact_ad}" method="get" class="mb-2">
+                    <button type="submit" class="btn btn-outline-primary w-100">お問い合わせ一覧</button>
+                </form>
+                <form th:action="@{/user_list}" method="get">
+                    <button type="submit" class="btn btn-outline-primary w-100">タイムライン</button>
+                </form>
+            </nav>
+
+            <!-- メインコンテンツ -->
+            <main class="flex-grow-1 overflow-auto p-4">
+                <div class="table-responsive container mt-4 w-75">
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="mb-0">アカウント一覧</h2>
+                        <a href="/createuser_ad" class="btn btn-success">アカウント追加</a>
+                    </div>
+                        <table class="table table-bordered table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>ユーザー名</th>
+                                <th>メールアドレス</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user : ${userPage.content}">
+                                <td th:text="${user.username}"></td>
+                                <td th:text="${user.email}"></td>
+                                <td th:text="${user.role == 'ROLE_ADMIN' ? '管理者' : '一般ユーザー'}"></td>
+                                <td><a th:href="@{/user/edit/{id}(id=${user.id})}" class="btn btn-primary">編集</a></td>
+                                <td>
+                                    <!-- ロック／アンロックボタン -->
+                                    <form th:if="${user.id != loginUser.id}" th:action="@{${user.locked} ? '/user/unlock' : '/user/lock'}" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" th:value="${user.id}" />
+                                        <input type="hidden" name="_csrf" value="${_csrf.token}">
+                                        <button type="submit" th:classappend="${user.locked} ? 'btn btn-success' : 'btn btn-warning'" class="mb-1">
+                                            <span th:text="${user.locked} ? 'ロック解除' : 'アクセス禁止'"></span>
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <!-- 削除ボタン -->
+                                    <form th:if="${user.id != loginUser.id}" th:action="@{/user/delete}" method="post" class="mb-1">
+                                        <input type="hidden" name="id" th:value="${user.id}">
+                                        <button type="submit" class="btn btn-danger">削除</button>
+                                    </form>  
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- ページネーション -->
+                    <nav aria-label="ページナビゲーション">
+                        <ul class="pagination justify-content-center">
+
+                            <!-- 前へ -->
+                            <li class="page-item" th:classappend="${userPage.hasPrevious()} ? '' : 'disabled'">
+                                <a class="page-link" th:href="@{/user(page=${currentPage - 1})}">前へ</a>
+                            </li>
+
+                            <!-- 各ページ番号 -->
+                            <li class="page-item"
+                                th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
+                                th:classappend="${i == currentPage} ? 'active'">
+                                <a class="page-link" th:href="@{/user(page=${i})}" th:text="${i + 1}">1</a>
+                            </li>
+
+                            <!-- 次へ -->
+                            <li class="page-item" th:classappend="${userPage.hasNext()} ? '' : 'disabled'">
+                                <a class="page-link" th:href="@{/user(page=${currentPage + 1})}">次へ</a>
+                            </li>
+
+                        </ul>
+                    </nav>
+
+                    <a href="/deleted_users" style="font-size: 20px; padding: 12px 24px;">削除済み一覧へ</a> 
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
