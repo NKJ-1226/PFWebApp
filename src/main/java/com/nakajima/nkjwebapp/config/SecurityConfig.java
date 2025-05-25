@@ -71,9 +71,10 @@ public class SecurityConfig {
     public AuthenticationFailureHandler customAuthenticationFailureHandler() {
         return (HttpServletRequest request, HttpServletResponse response, org.springframework.security.core.AuthenticationException exception) -> {
             if (exception instanceof LockedException) {
-                response.sendRedirect("/locked");  // アカウントロック専用ページへ
+                // アカウントがロックされているときのエラーメッセージ
+                response.sendRedirect("/login?locked");
             } else {
-                // それ以外の失敗はエラー付きログイン画面へ
+                // 通常時のエラーメッセージ
                 response.sendRedirect("/login?error");
             }
         };

@@ -29,15 +29,18 @@
             <ul class="list-group mb-3">
                 <li class="list-group-item">
                     <label for="username" class="form-label">ユーザー名</label>
-                    <input type="text" id="username" name="username" class="form-control" th:value="${user.username}">
+                    <input type="text" id="username" name="username" class="form-control" th:value="${user.username}" required placeholder="255文字以内">
+                    <div id="usernameError" style="color: red; display: none;">255文字以内で入力してください。</div>
                 </li>
                 <li class="list-group-item">
                     <label for="password" class="form-label">パスワード</label>
-                    <input type="password" id="password" name="password" class="form-control" th:value="${user.password}">
+                    <input type="password" id="password" name="password" class="form-control" th:value="${user.password}" placeholder="8~32文字の半角英数字と_-のみ">
+                    <div id="passwordError" style="color: red; display: none;">パスワードは8～32文字の半角英数字と_-のみ使用可能です。</div>
                 </li>
                 <li class="list-group-item">
                     <label for="email" class="form-label">メールアドレス</label>
-                    <input type="email" id="email" name="email" class="form-control" th:value="${user.email}">
+                    <input type="email" id="email" name="email" class="form-control" th:value="${user.email}" required placeholder="255文字以内">
+                    <div id="emailError" style="color: red; display: none;">255文字以内で入力してください。</div>
                 </li>
                 <li class="list-group-item">
                     <label for="role" class="form-label">権限</label>
@@ -46,51 +49,69 @@
                         <option th:value="ROLE_ADMIN" th:selected="${user.role == 'ROLE_ADMIN'}">管理者</option>
                     </select>
                 </li>
-                <!-- <li class="list-group-item">
-                    <label for="furigana" class="form-label">ふりがな</label>
-                    <input type="text" id="furigana" name="furigana" class="form-control" th:value="${user.furigana}">
-                </li>
-                <li class="list-group-item">
-                    <label for="gender" class="form-label">性別</label>
-                    <select id="gender" name="gender" class="form-select">
-                        <option value="">選択してください</option>
-                        <option value="男性" th:selected="${user.gender == '男性'}">男性</option>
-                        <option value="女性" th:selected="${user.gender == '女性'}">女性</option>
-                        <option value="その他" th:selected="${user.gender == 'その他'}">その他</option>
-                    </select>
-                </li>
-                <li class="list-group-item">
-                    <label for="age" class="form-label">年齢</label>
-                    <input type="number" id="age" name="age" class="form-control" min="0" max="999" th:value="${user.age}">
-                </li>
-                <li class="list-group-item">
-                    <label class="form-label">自己紹介:</label>
-                    <textarea id="selfIntroduction" name="selfIntroduction" class="form-control" rows="4"
-                            th:text="${user.selfIntroduction}"></textarea>
-                    <div id="selfIntroductionError" class="text-danger" style="display: none;">自己紹介は1500文字以内で入力してください。</div>
-                </li>
-                <li class="list-group-item">
-                    <label for="profileImage" class="form-label">プロフィール画像</label>
-                    <input type="file" id="profileImage" name="profileImage" class="form-control">
-                </li> -->
             </ul>
 
             <button type="submit" class="btn btn-primary">更新</button>
         </form>
 
-    </div>    
+    </div>
 
     <script>
-            const textarea = document.getElementById("selfIntroduction");
-            const errorDiv = document.getElementById("selfIntroductionError");
+        document.addEventListener("DOMContentLoaded", () => {
+            // ユーザー名チェック
+            const usernameInput = document.getElementById("username");
+            const usernameError = document.getElementById("usernameError");
 
-            textarea.addEventListener("input", () => {
-                if (textarea.value.length > 1500) {
-                    errorDiv.style.display = "block";
+            usernameInput.addEventListener("input", () => {
+                if (usernameInput.value.length > 255) {
+                    usernameError.style.display = "block";
+                    usernameInput.setCustomValidity("255文字以内で入力してください。");
                 } else {
-                    errorDiv.style.display = "none";
+                    usernameError.style.display = "none";
+                    usernameInput.setCustomValidity("");
                 }
             });
+
+            // パスワードチェック（値が空でない時のみチェック）
+            const passwordInput = document.getElementById("password");
+            const passwordError = document.getElementById("passwordError");
+
+            const validatePassword = () => {
+                const val = passwordInput.value;
+                const regex = /^[a-zA-Z0-9_-]{8,32}$/;
+
+                if (val === "") {
+                    passwordError.style.display = "none";
+                    passwordInput.setCustomValidity("");
+                } else if (!regex.test(val)) {
+                    passwordError.style.display = "block";
+                    passwordInput.setCustomValidity("パスワードが条件を満たしていません。");
+                } else {
+                    passwordError.style.display = "none";
+                    passwordInput.setCustomValidity("");
+                }
+            };
+
+            passwordInput.addEventListener("input", validatePassword);
+            passwordInput.addEventListener("change", validatePassword);
+
+            // メールアドレスチェック（255文字制限）
+            const emailInput = document.getElementById("email");
+            const emailError = document.getElementById("emailError");
+
+            const validateEmail = () => {
+                if (emailInput.value.length > 255) {
+                    emailError.style.display = "block";
+                    emailInput.setCustomValidity("255文字以内で入力してください。");
+                } else {
+                    emailError.style.display = "none";
+                    emailInput.setCustomValidity("");
+                }
+            };
+
+            emailInput.addEventListener("input", validateEmail);
+            emailInput.addEventListener("invalid", validateEmail);
+        });
     </script>
 
 </body>

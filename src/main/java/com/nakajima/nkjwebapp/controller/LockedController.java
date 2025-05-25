@@ -1,14 +1,16 @@
-package com.nakajima.nkjwebapp.controller;
+// やっぱつかわない
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+// package com.nakajima.nkjwebapp.controller;
 
-@Controller
-public class LockedController {
+// import org.springframework.stereotype.Controller;
+// import org.springframework.web.bind.annotation.GetMapping;
 
-    @GetMapping("/locked")
-    public String locked() {
-        return "locked";
-    }
+// @Controller
+// public class LockedController {
 
-}
+//     @GetMapping("/locked")
+//     public String locked() {
+//         return "locked";
+//     }
+
+// }

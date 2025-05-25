@@ -17,6 +17,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import java.io.IOException;
 import java.util.List;
 
@@ -48,16 +50,23 @@ public class AdminController {
         return "admin";
     }
 
-
-    // アカウント一覧&ページネーション対応
+    // アカウント一覧 & ページネーション対応
     @GetMapping("/user")
-    public String showUserList(@RequestParam(defaultValue = "0") int page, Model model) {
+    public String showUserList(@RequestParam(defaultValue = "0") int page,
+                            Model model,
+                            @AuthenticationPrincipal UserDetails userDetails) {
         int pageSize = 5;
         Pageable pageable = PageRequest.of(page, pageSize);
         Page<UserInfo> userPage = userService.getUsersByPage(pageable);
 
+        // ログイン中のユーザー情報を取得
+        String currentUsername = userDetails.getUsername();
+        UserInfo loginUser = userService.findByUsername(currentUsername);
+
         model.addAttribute("userPage", userPage);
         model.addAttribute("currentPage", page);
+        model.addAttribute("loginUser", loginUser);
+
         return "user";
     }
 

@@ -73,7 +73,7 @@
                                 <td><a th:href="@{/user/edit/{id}(id=${user.id})}" class="btn btn-primary">編集</a></td>
                                 <td>
                                     <!-- ロック／アンロックボタン -->
-                                    <form th:action="@{${user.locked} ? '/user/unlock' : '/user/lock'}" method="post" style="display:inline;">
+                                    <form th:if="${user.id != loginUser.id}" th:action="@{${user.locked} ? '/user/unlock' : '/user/lock'}" method="post" style="display:inline;">
                                         <input type="hidden" name="id" th:value="${user.id}" />
                                         <input type="hidden" name="_csrf" value="${_csrf.token}">
                                         <button type="submit" th:classappend="${user.locked} ? 'btn btn-success' : 'btn btn-warning'" class="mb-1">
@@ -83,7 +83,7 @@
                                 </td>
                                 <td>
                                     <!-- 削除ボタン -->
-                                    <form th:action="@{/user/delete}" method="post" class="mb-1">
+                                    <form th:if="${user.id != loginUser.id}" th:action="@{/user/delete}" method="post" class="mb-1">
                                         <input type="hidden" name="id" th:value="${user.id}">
                                         <button type="submit" class="btn btn-danger">削除</button>
                                     </form>  
