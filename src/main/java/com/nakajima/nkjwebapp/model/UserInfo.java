@@ -30,10 +30,12 @@ public class UserInfo implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 自動採番
     private int id;
 
-    @Column(nullable = false) // nullable...nullを許可するかどうか
+    @Column(nullable = false, length = 255) // nullを許可するかどうか、最大255文字
+    @Size(max = 255, message = "255文字以内で入力してください")
     private String username;
 
-    @Column(name = "furigana", length = 255) // ふりがな（最大255文字）
+    @Pattern(regexp = "^$|^[\\u3040-\\u309Fー]+$", message = "ひらがなのみで入力してください")
+    @Column(name = "furigana", length = 255)
     private String furigana;
 
     @Size(min = 8, max = 32) // 8~32文字
@@ -56,7 +58,7 @@ public class UserInfo implements UserDetails {
     @Column(name = "age") // 年齢
     private Integer age;
 
-    @Size(max = 1500) // 自己紹介（255文字以内）
+    @Size(max = 1500, message = "自己紹介は1500文字以内で入力してください") // 自己紹介（最大1500文字）
     @Column(name = "self_introduction", length = 1500)
     private String selfIntroduction;
 
