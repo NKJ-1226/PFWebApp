@@ -56,7 +56,6 @@
                                 <th>プロフィール</th>
                                 <th>ユーザー名</th>
                                 <th>今月のいいね数</th>
-                                <!-- <th></th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -70,9 +69,7 @@
                                 </td>
                                 <td class="align-middle" th:text="${user.username}"></td>
                                 <td class="align-middle" th:text="${user.likeCount}"></td>
-                                <!-- <td class="align-middle">
-                                    <a th:href="@{/detail/{id}(id=${user.id})}" class="btn btn-sm btn-info">詳細</a>
-                                </td> -->
+
                             </tr>
                         </tbody>
                     </table>

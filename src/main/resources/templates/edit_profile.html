@@ -24,22 +24,26 @@
                 
                 <div class="mb-3">
                     <label class="form-label">ユーザー名:</label>
-                    <input type="text" th:field="*{username}" class="form-control" required />
+                    <input type="text" th:field="*{username}" class="form-control" required placeholder="255文字以内"/>
+                    <div id="usernameError" style="color: red; display: none;">255文字以内で入力してください。</div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">メールアドレス:</label>
-                    <input type="email" th:field="*{email}" class="form-control" required />
+                    <input type="email" th:field="*{email}" class="form-control" required  placeholder="255文字以内"/>
+                    <div id="emailError" style="color: red; display: none;">255文字以内で入力してください。</div>
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label">新しいパスワード（変更したい場合）:</label>
-                    <input type="password" name="newPassword" class="form-control" />
+                    <input type="password" id="newPasswordInput" name="newPassword" class="form-control" placeholder="8~32文字の半角英数字と_-のみ"/>
+                    <div id="passwordError" style="color: red; display: none;">パスワードは8～32文字の半角英数字と_-のみ使用可能です。</div>
                 </div>
             
                 <div class="mb-3">
                     <label class="form-label">ふりがな:</label>
-                    <input type="text" th:field="*{furigana}" class="form-control" />
+                    <input type="text" id="furiganaInput" th:field="*{furigana}" class="form-control" />
+                    <div id="furiganaError" style="color:red; display:none;">ふりがなはひらがなのみ入力してください</div>
                 </div>
             
                 <div class="mb-3">
@@ -76,17 +80,86 @@
         </div>
 
         <script>
-            const textarea = document.getElementById("selfIntroduction");
-            const errorDiv = document.getElementById("selfIntroductionError");
+            document.addEventListener("DOMContentLoaded", () => {
+                // 自己紹介の文字数チェック
+                const textarea = document.getElementById("selfIntroduction");
+                const errorDiv = document.getElementById("selfIntroductionError");
 
-            textarea.addEventListener("input", () => {
-                if (textarea.value.length > 1500) {
-                    errorDiv.style.display = "block";
-                } else {
-                    errorDiv.style.display = "none";
-                }
+                textarea.addEventListener("input", () => {
+                    if (textarea.value.length > 1500) {
+                        errorDiv.style.display = "block";
+                    } else {
+                        errorDiv.style.display = "none";
+                    }
+                });
+
+                // ふりがなのひらがなチェック
+                const furiganaInput = document.getElementById("furiganaInput");
+                const furiganaErrorDiv = document.getElementById("furiganaError");
+
+                furiganaInput.addEventListener("input", () => {
+                    const value = furiganaInput.value;
+                    const regex = /^[\u3040-\u309F\s]*$/;  // ひらがなと空白文字のみ許可
+                    if (value === "" || regex.test(value)) {
+                        furiganaErrorDiv.style.display = "none";
+                    } else {
+                        furiganaErrorDiv.style.display = "block";
+                    }
+                });
+
+                // 新しいパスワードのバリデーション追加
+                const passwordInput = document.getElementById("newPasswordInput");
+                const passwordError = document.getElementById("passwordError");
+
+                passwordInput.addEventListener("input", () => {
+                    const val = passwordInput.value;
+                    const regex = /^[a-zA-Z0-9_-]{8,32}$/;
+
+                    if (val === "") {
+                        passwordError.style.display = "none";
+                        passwordInput.setCustomValidity("");
+                        return;
+                    }
+
+                    if (regex.test(val)) {
+                        passwordError.style.display = "none";
+                        passwordInput.setCustomValidity("");
+                    } else {
+                        passwordError.style.display = "block";
+                        passwordInput.setCustomValidity("パスワードが条件を満たしていません。");
+                    }
+                });
+
+                // ユーザー名の255文字制限チェック
+                const usernameInput = document.getElementById("username");
+                const usernameError = document.getElementById("usernameError");
+
+                usernameInput.addEventListener("input", () => {
+                    if (usernameInput.value.length > 255) {
+                        usernameError.style.display = "block";
+                        usernameInput.setCustomValidity("255文字以内で入力してください。");
+                    } else {
+                        usernameError.style.display = "none";
+                        usernameInput.setCustomValidity("");
+                    }
+                });
+
+                // メールアドレスの255文字制限チェック
+                const emailInput = document.getElementById("email");
+                const emailError = document.getElementById("emailError");
+
+                emailInput.addEventListener("input", () => {
+                    if (emailInput.value.length > 255) {
+                        emailError.style.display = "block";
+                        emailInput.setCustomValidity("255文字以内で入力してください。");
+                    } else {
+                        emailError.style.display = "none";
+                        emailInput.setCustomValidity("");
+                    }
+                });
+
             });
-        </script>
+            </script>
 
 </body>
 </html>

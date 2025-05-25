@@ -25,14 +25,29 @@ public class LoginController {
         this.userService = userService;
     }
 
+    // @GetMapping("/login")
+    // public String login(@RequestParam(value = "error", required = false) String error, Model model) {
+    //     if (error != null) {
+    //         model.addAttribute("loginError", true);
+    //     }
+    //     return "login";
+    // }
+    
     @GetMapping("/login")
-    public String login(@RequestParam(value = "error", required = false) String error, Model model) {
+    public String login(
+        @RequestParam(value = "error", required = false) String error,
+        @RequestParam(value = "locked", required = false) String locked,
+        Model model) {
+
         if (error != null) {
             model.addAttribute("loginError", true);
         }
+        if (locked != null) {
+            model.addAttribute("lockedError", true);
+        }
+
         return "login";
     }
-
 
     // 認証されていない場合はログイン画面にリダイレクト
     @GetMapping("/")
@@ -45,12 +60,27 @@ public class LoginController {
         return "redirect:/login"; // ログイン画面にリダイレクト
     }
 
-    // 一般ユーザーログイン成功時の遷移先(いいねランキングを表示)
     @GetMapping("/top")
     public String showTopPage(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()
+            && authentication.getPrincipal() instanceof UserInfo) {
+
+            UserInfo currentUser = (UserInfo) authentication.getPrincipal();
+
+            int monthlyLikes = userService.getTotalLikesThisMonth(currentUser.getId());
+            int yearlyLikes = userService.getTotalLikesThisYear(currentUser.getId());
+
+            model.addAttribute("thisMonthLikes", monthlyLikes);
+            model.addAttribute("thisYearLikes", yearlyLikes);
+            model.addAttribute("username", currentUser.getUsername());
+        }
+
         List<UserInfo> rankedUsers = userService.getUserRankedByLikesThisMonth();
         model.addAttribute("rankedUsers", rankedUsers);
-        return "top"; 
+
+        return "top";
     }
 
 }

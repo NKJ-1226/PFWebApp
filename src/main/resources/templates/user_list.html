@@ -7,8 +7,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<!-- ヘッダー部分 -->
-<body>
     <div class="d-flex flex-column vh-100">
         <!-- ヘッダー -->
         <header class="bg-light p-3">
@@ -68,7 +66,7 @@
                 <div class="table-responsive container mt-4">
                     
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h2 class="mb-0">タイムライン</h2>
+                        <h2 class="mb-0">ユーザー一覧</h2>
                     </div>
                                 
                     <table class="table table-bordered table-hover table-striped table-sm">
@@ -91,6 +89,35 @@
                                 <td class="align-middle">
                                     <a th:href="@{/detail/{id}(id=${user.id})}" class="btn btn-sm btn-info">詳細</a>
                                 </td> 
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-responsive container mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="mb-0">月間いいねランキング</h2>
+                    </div>
+                    <table class="table table-bordered table-hover table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>順位</th>
+                                <th>プロフィール</th>
+                                <th>ユーザー名</th>
+                                <th>今月のいいね数</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="user, stat : ${rankedUsersThisMonth}">
+                                <td class="align-middle" th:text="${stat.index + 1}"></td>
+                                <td class="text-center align-middle">
+                                    <img th:src="@{${user.profileImage != null} ? ${user.profileImage} : '/uploads/default-profile.jpg'}"
+                                        alt="プロフィール画像"
+                                        class="rounded-circle"
+                                        style="width: 100px; height: 100px; object-fit: cover;" />
+                                </td>
+                                <td class="align-middle" th:text="${user.username}"></td>
+                                <td class="align-middle" th:text="${user.likeCount}"></td>
                             </tr>
                         </tbody>
                     </table>

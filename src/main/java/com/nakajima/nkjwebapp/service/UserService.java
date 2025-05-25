@@ -135,6 +135,7 @@ public class UserService {
             }
 
             user.setDeleted(true); // 論理削除フラグを true に
+            
             userRepository.save(user); // 更新
 
             return true; // 削除成功
@@ -354,4 +355,15 @@ public class UserService {
         }
         return rankedUsers;
     }
+
+    // 指定ユーザーの月間いいね数を取得
+    public int getTotalLikesThisMonth(Integer userId) {
+        return likeRepository.countLikesThisMonthByUserId(userId);
+    }
+
+    // 指定ユーザーの年間いいね数を取得
+    public int getTotalLikesThisYear(Integer userId) {
+        return likeRepository.countLikesThisYearByUserId(userId);
+    }
+
 }

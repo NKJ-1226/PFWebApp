@@ -22,13 +22,16 @@
             <!-- 編集フォーム -->
             <form th:action="@{/user/create}" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
-                    <input type="text" class="form-control" name="username" placeholder="ユーザー名" required />
+                    <input id="username" type="text" class="form-control" name="username" placeholder="ユーザー名" required />
+                    <div id="usernameError" style="color: red; display: none;">255文字以内で入力してください。</div>
                 </div>
                 <div class="mb-3">
-                    <input type="email" class="form-control" name="email" placeholder="メールアドレス" required />
+                    <input id="email" type="email" class="form-control" name="email" placeholder="メールアドレス" required />
+                    <div id="emailError" style="color: red; display: none;">255文字以内で入力してください。</div>
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control" name="password" placeholder="パスワード" required />
+                    <input id="password" type="password" class="form-control" name="password" required placeholder="8~32文字の半角英数字と_-のみ" />
+                    <div id="passwordError" style="color: red; display: none;">パスワードは8～32文字の半角英数字と_-のみ使用可能です。</div>
                 </div>
                 <div class="mb-3">
                     <select class="form-select" name="role">
@@ -36,29 +39,68 @@
                         <option value="ROLE_ADMIN">管理者</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <input type="text" class="form-control" name="furigana" placeholder="ふりがな" />
-                </div>
-                <div class="mb-3">
-                    <select class="form-select" name="gender">
-                        <option value="">性別を選択</option>
-                        <option value="男性">男性</option>
-                        <option value="女性">女性</option>
-                        <option value="その他">その他</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <input type="number" class="form-control" name="age" placeholder="年齢" />
-                </div>
-                <div class="mb-3">
-                    <textarea class="form-control" name="selfIntroduction" rows="3" placeholder="自己紹介"></textarea>
-                </div>
-                <div class="mb-3">
-                    <input type="file" class="form-control" name="profileImage" accept="image/*" />
-                </div>            
                 <button type="submit" class="btn btn-primary">登録</button>
             </form>
-            
-        </div>    
+
+        </div>
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                // ユーザー名チェック
+                const usernameInput = document.getElementById("username");
+                const usernameError = document.getElementById("usernameError");
+
+                usernameInput.addEventListener("input", () => {
+                    if (usernameInput.value.length > 255) {
+                        usernameError.style.display = "block";
+                        usernameInput.setCustomValidity("255文字以内で入力してください。");
+                    } else {
+                        usernameError.style.display = "none";
+                        usernameInput.setCustomValidity("");
+                    }
+                });
+
+                // パスワードチェック（値が空でない時のみチェック）
+                const passwordInput = document.getElementById("password");
+                const passwordError = document.getElementById("passwordError");
+
+                const validatePassword = () => {
+                    const val = passwordInput.value;
+                    const regex = /^[a-zA-Z0-9_-]{8,32}$/;
+
+                    if (val === "") {
+                        passwordError.style.display = "none";
+                        passwordInput.setCustomValidity("");
+                    } else if (!regex.test(val)) {
+                        passwordError.style.display = "block";
+                        passwordInput.setCustomValidity("パスワードが条件を満たしていません。");
+                    } else {
+                        passwordError.style.display = "none";
+                        passwordInput.setCustomValidity("");
+                    }
+                };
+
+                passwordInput.addEventListener("input", validatePassword);
+                passwordInput.addEventListener("change", validatePassword);
+
+                // メールアドレスチェック（255文字制限）
+                const emailInput = document.getElementById("email");
+                const emailError = document.getElementById("emailError");
+
+                const validateEmail = () => {
+                    if (emailInput.value.length > 255) {
+                        emailError.style.display = "block";
+                        emailInput.setCustomValidity("255文字以内で入力してください。");
+                    } else {
+                        emailError.style.display = "none";
+                        emailInput.setCustomValidity("");
+                    }
+                };
+
+                emailInput.addEventListener("input", validateEmail);
+                emailInput.addEventListener("invalid", validateEmail);
+            });
+        </script>
+
     </body>
 </html>

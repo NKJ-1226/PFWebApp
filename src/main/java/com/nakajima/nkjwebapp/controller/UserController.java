@@ -26,11 +26,14 @@ public class UserController {
 
     // 他ユーザーの一覧表示
     @GetMapping("/user_list")
-    public String listUsers(Model model) {
-        List<UserInfo> users = userService.getAllUsers();
-        model.addAttribute("users", users);
-        return "user_list"; // templates/user_list.html が必要
-    }
+        public String listUsers(Model model) {
+            List<UserInfo> users = userService.getAllUsers();
+            List<UserInfo> rankedUsersThisMonth = userService.getUserRankedByLikesThisMonth();
+            model.addAttribute("users", users);
+            model.addAttribute("rankedUsersThisMonth", rankedUsersThisMonth);
+            return "user_list"; 
+        }
+
 
     // 他ユーザーのプロフィール表示
     @GetMapping("/profile/{id}")

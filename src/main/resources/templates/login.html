@@ -22,8 +22,14 @@
     <div class="wrapper">
         <form th:action="@{/login}" method="post" name="Login_Form" class="form-signin">
 
-            <div th:if="${loginError}">
+            <!-- 通常時のエラーメッセージ -->
+            <div th:if="${loginError}" style="color:red;">
                 ユーザーIDかパスワードが違います！
+            </div>
+
+            <!-- アカウントがロックされているときのエラーメッセージ -->
+            <div th:if="${lockedError}" style="color:red;">
+                アカウントがロックされています。管理者にお問い合わせください。
             </div>
 
             <!-- ログアウト成功時のメッセージ -->

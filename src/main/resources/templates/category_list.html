@@ -38,7 +38,8 @@
         <thead>
             <tr>
                 <th>カテゴリ名</th>
-                <th>操作</th> 
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -47,12 +48,14 @@
                 <td>
                     <!-- 編集ボタン -->
                     <a th:href="@{/category/edit/{id}(id=${category.id})}" class="btn btn-warning">編集</a>
+                </td> 
+                <td>
                     <!-- 削除ボタン -->
                     <form th:action="@{/category/delete}" method="post" style="display:inline;">
                         <input type="hidden" name="id" th:value="${category.id}"/>
                         <button type="submit" class="btn btn-danger btn-sm">削除</button>
                     </form>
-                </td> 
+                </td>
             </tr>
             <tr th:if="${#lists.isEmpty(categories)}">
                 <td colspan="2">カテゴリがありません</td>

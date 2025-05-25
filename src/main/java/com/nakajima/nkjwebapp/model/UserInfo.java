@@ -1,6 +1,8 @@
 package com.nakajima.nkjwebapp.model;
 
 import jakarta.persistence.Transient;
+
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +13,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -72,6 +76,16 @@ public class UserInfo implements UserDetails {
     
     private int likeCountThisYear;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createAt; // アカウント作成日
+
+    @Column(name = "updated_at")
+    private LocalDateTime updateAt; // アカウント更新日
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt; // アカウント削除日
+
+
 // getter / setter を追加
 
     @Override
@@ -109,4 +123,16 @@ public class UserInfo implements UserDetails {
 
     @Transient
     private int likeCount;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createAt = LocalDateTime.now();
+        this.updateAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updateAt = LocalDateTime.now();
+    }
+
 }
