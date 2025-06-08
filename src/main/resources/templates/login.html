@@ -8,8 +8,21 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- BootstrapのJavaScript（CDN経由で読み込む） -->
-    <script src = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 
+    <style>
+        #flashMessage {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1050;
+            min-width: 300px;
+            max-width: 90%;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 
@@ -19,40 +32,63 @@
             <h1 class="text-dark text-decoration-none">ログイン画面</h1>
         </header>
     
-    <div class="wrapper">
-        <form th:action="@{/login}" method="post" name="Login_Form" class="form-signin">
+        <div id="flashMessage" 
+             th:if="${message}" 
+             th:class="'alert ' + ${alertClass}">
+            <span th:text="${message}"></span>
+        </div>
 
-            <!-- 通常時のエラーメッセージ -->
-            <div th:if="${loginError}" style="color:red;">
-                ユーザーIDかパスワードが違います！
-            </div>
+        <div class="wrapper">
+            <form th:action="@{/login}" method="post" name="Login_Form" class="form-signin">
 
-            <!-- アカウントがロックされているときのエラーメッセージ -->
-            <div th:if="${lockedError}" style="color:red;">
-                アカウントがロックされています。管理者にお問い合わせください。
-            </div>
+                <!-- 通常時のエラーメッセージ -->
+                <div th:if="${loginError}" style="color:red;">
+                    ユーザーIDかパスワードが違います！
+                </div>
 
-            <!-- ログアウト成功時のメッセージ -->
-            <div th:if="${param.logout}">
-                <p>ログアウトしました。</p>
-            </div>
-            
-            <hr class="colorgraph">
-            <label>メールアドレス</label><br>
-            <p><input type="text" name="username" placeholder="" /><br></p>
-            <label>パスワード</label><br>
-            <p><input type="password" name="password" placeholder="" /><br></p>
-            <button name="Submit" value="Login" type="Submit" class="btn btn-primary">ログイン</button>
-        </form>
-        <br>
+                <!-- アカウントがロックされているときのエラーメッセージ -->
+                <div th:if="${lockedError}" style="color:red;">
+                    アカウントがロックされています。管理者にお問い合わせください。
+                </div>
 
-        <!-- 「contact_form.html」へのリンクを追加 -->
-        <footer class="text-center mt-4">
-            <a href="/contact_form" class="btn btn-link">お問い合わせフォームへ</a>
-        </footer>
+                <!-- ログアウト成功時のメッセージ -->
+                <div th:if="${param.logout}">
+                    <p>ログアウトしました。</p>
+                </div>
+                
+                <hr class="colorgraph">
+                <label>メールアドレス</label><br>
+                <p><input type="text" name="username" placeholder="" /><br></p>
+                <label>パスワード</label><br>
+                <p><input type="password" name="password" placeholder="" /><br></p>
+                <button name="Submit" value="Login" type="Submit" class="btn btn-primary">ログイン</button>
+            </form>
+            <br>
 
+            <!-- 「contact_form.html」へのリンクを追加 -->
+            <footer class="text-center mt-4">
+                <a href="/contact_form" class="btn btn-link">お問い合わせフォームへ</a>
+            </footer>
+
+        </div>
     </div>
-</div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const flashMessage = document.getElementById("flashMessage");
+            if (flashMessage && flashMessage.textContent.trim() !== "") {
+                flashMessage.style.display = "block";
+                flashMessage.style.opacity = "1";
+
+                setTimeout(() => {
+                    flashMessage.style.transition = "opacity 0.5s ease";
+                    flashMessage.style.opacity = "0";
+                    setTimeout(() => {
+                        flashMessage.style.display = "none";
+                    }, 500);
+                }, 3000);
+            }
+        });
+    </script>
 </body>
 </html>

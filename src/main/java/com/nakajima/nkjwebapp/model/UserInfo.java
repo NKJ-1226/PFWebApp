@@ -34,7 +34,7 @@ public class UserInfo implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 自動採番
     private int id;
 
-    @Column(nullable = false, length = 255) // nullを許可するかどうか、最大255文字
+    @Column(nullable = false, unique = true, length = 255) // nullを許可するかどうか、最大255文字
     @Size(max = 255, message = "255文字以内で入力してください")
     private String username;
 

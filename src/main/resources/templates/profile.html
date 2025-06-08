@@ -78,7 +78,7 @@
                         <div class="mb-3 text-center">
                             <strong>プロフィール画像：</strong>
                             <div>
-                                <img th:src="@{${user.profileImage != null} ? ${user.profileImage} : '/uploads/default-profile.jpg'}"
+                                <img th:src="${user.profileImage != null} ? @{${user.profileImage}} : @{/uploads/default-profile.jpg}"
                                     alt="プロフィール画像" class="img-fluid rounded-circle" style="max-height: 150px" />
                             </div>
                         </div>

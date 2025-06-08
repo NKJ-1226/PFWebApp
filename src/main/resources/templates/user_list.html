@@ -80,7 +80,7 @@
                         <tbody>
                             <tr th:each="user : ${users}" th:if="${not #strings.arrayJoin(user.authorities, ',').contains('ROLE_ADMIN')}">
                                 <td class="text-center align-middle">
-                                    <img th:src="@{${user.profileImage != null} ? ${user.profileImage} : '/uploads/default-profile.jpg'}"
+                                    <img th:src="${user.profileImage != null} ? @{${user.profileImage}} : @{/uploads/default-profile.jpg}"
                                         alt="プロフィール画像"
                                         class="rounded-circle"
                                         style="width: 100px; height: 100px; object-fit: cover;" />
@@ -111,7 +111,7 @@
                             <tr th:each="user, stat : ${rankedUsersThisMonth}">
                                 <td class="align-middle" th:text="${stat.index + 1}"></td>
                                 <td class="text-center align-middle">
-                                    <img th:src="@{${user.profileImage != null} ? ${user.profileImage} : '/uploads/default-profile.jpg'}"
+                                    <img th:src="${user.profileImage != null} ? @{${user.profileImage}} : @{/uploads/default-profile.jpg}"
                                         alt="プロフィール画像"
                                         class="rounded-circle"
                                         style="width: 100px; height: 100px; object-fit: cover;" />

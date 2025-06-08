@@ -70,7 +70,8 @@
             
                 <div class="mb-3">
                     <label class="form-label">プロフィール画像:</label>
-                    <input type="file" name="profileImageFile" class="form-control" />
+                    <input type="file" name="profileImageFile" id="profileImageInput" class="form-control" />
+                    <div id="profileImageError" style="color: red; display: none; margin-top: 0.5em;"></div>
                 </div>
             
                 <div class="text-end">
@@ -155,6 +156,39 @@
                     } else {
                         emailError.style.display = "none";
                         emailInput.setCustomValidity("");
+                    }
+                });
+
+                const profileImageInput = document.getElementById("profileImageInput");
+                const profileImageError = document.getElementById("profileImageError");
+                const form = profileImageInput.closest("form");
+
+                profileImageInput.addEventListener("change", () => {
+                    profileImageError.style.display = "none";
+                    profileImageError.textContent = "";
+
+                    const file = profileImageInput.files[0];
+                    if (file) {
+                        const maxSize = 2 * 1024 * 1024; // 2MB
+                        if (file.size > maxSize) {
+                            profileImageError.textContent = "ファイルサイズは2MB以下にしてください。";
+                            profileImageError.style.display = "block";
+                            profileImageInput.setCustomValidity("ファイルサイズは2MB以下にしてください。");
+                        } else {
+                            profileImageInput.setCustomValidity("");
+                        }
+                    } else {
+                        profileImageInput.setCustomValidity("");
+                    }
+                });
+
+                // 送信時にもチェックして安全に
+                form.addEventListener("submit", (e) => {
+                    const file = profileImageInput.files[0];
+                    if (file && file.size > 2 * 1024 * 1024) {
+                        profileImageError.textContent = "ファイルサイズは2MB以下にしてください。";
+                        profileImageError.style.display = "block";
+                        e.preventDefault();
                     }
                 });
 

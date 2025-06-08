@@ -1,5 +1,6 @@
 package com.nakajima.nkjwebapp.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -9,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -39,4 +41,19 @@ public class Category {
     public String toString() {
         return name != null ? name :"未設定";
     }
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt; // 作成日
+
+    @PrePersist
+        protected void onCreate() {
+            createdAt = LocalDateTime.now();
+    }    
+
+    @Column(name = "updated_at")
+    private LocalDateTime updateAt; // 更新日
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt; // 削除日
+        
 }

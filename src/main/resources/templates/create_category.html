@@ -10,15 +10,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 </head>
 <body>
-
-<div class="container">
-    <h1>カテゴリ作成</h1>
-
+    
     <!-- メッセージ表示 -->
-    <div th:if="${message}" class="alert" th:class="${alertClass}">
+    <div id="flashMessage" th:if="${message}" th:class="'alert ' + ${alertClass}" 
+        style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1050;">
         <span th:text="${message}"></span>
     </div>
 
+<div class="container">
+    <h1>カテゴリ作成</h1>
     <form action="/admin/category/save" method="POST">
         <div class="form-group">
             <label for="name">カテゴリ名</label>
@@ -32,21 +32,41 @@
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const categoryInput = document.getElementById("name");
-    const categoryError = document.getElementById("categorynameError");
+    document.addEventListener("DOMContentLoaded", () => {
+        // カテゴリ名の255文字チェック
+        const categoryInput = document.getElementById("name");
+        const categoryError = document.getElementById("categorynameError");
 
-    categoryInput.addEventListener("input", () => {
-        if (categoryInput.value.length > 255) {
-            categoryError.style.display = "block";
-            categoryInput.setCustomValidity("255文字以内で入力してください。");
-        } else {
-            categoryError.style.display = "none";
-            categoryInput.setCustomValidity("");
+        categoryInput.addEventListener("input", () => {
+            if (categoryInput.value.length > 255) {
+                categoryError.style.display = "block";
+                categoryInput.setCustomValidity("255文字以内で入力してください。");
+            } else {
+                categoryError.style.display = "none";
+                categoryInput.setCustomValidity("");
+            }
+        });
+
+        // メッセージ表示（完了時）
+        const flashMessage = document.getElementById("flashMessage");
+
+        if (flashMessage && flashMessage.textContent.trim() !== "") {
+            // 表示
+            flashMessage.style.display = "block";
+
+            // 3秒後にフェードアウト
+            setTimeout(() => {
+                flashMessage.style.transition = "opacity 0.5s";
+                flashMessage.style.opacity = "0";
+
+                setTimeout(() => {
+                    flashMessage.style.display = "none";
+                }, 500);
+            }, 3000);
         }
     });
-});
 </script>
+
 
 </body>
 </html>

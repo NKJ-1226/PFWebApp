@@ -257,7 +257,8 @@ public class UserService {
 
     // アップロードディレクトリの設定をプロパティファイルから読み込む
     // @Value("${upload.dir:/WorkSpace/PF_NAKAJIMA/nkjwebapp/uploads/}")
-    @Value("${upload.dir:../../../../../../uploads/}")
+    // @Value("${upload.dir:../../../../../../uploads/}")
+    @Value("${upload.dir:/home/nakajima/project/PFWebApp/uploads/}")
     private String uploadDir;
 
     // ユーザーのプロフィール画像を保存する処理
@@ -280,6 +281,8 @@ public class UserService {
             profileImage.transferTo(filePath.toFile());
 
             // 保存した画像のパスを返す（Webアクセス用）
+            System.out.println("Saving file to: " + filePath.toString());
+
             return "/uploads/" + uniqueFileName; // ブラウザからアクセスできるパスを返す
         }
         return null;

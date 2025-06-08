@@ -17,7 +17,7 @@
         <div class="card">
             <div class="card-body text-center">
                 <!-- プロフィール画像（null対応） -->
-                <img th:src="@{${user.profileImage != null} ? ${user.profileImage} : '/uploads/default-profile.jpg'}"
+                <img th:src="${user.profileImage != null} ? @{${user.profileImage}} : @{/uploads/default-profile.jpg}"
                      alt="プロフィール画像"
                      class="rounded-circle"
                      style="width: 100px; height: 100px; object-fit: cover;" />

@@ -11,8 +11,12 @@ services:
       - SPRING_DATASOURCE_PASSWORD
       - SPRING_DATASOURCE_USERNAME
       - SPRING_DATASOURCE_URL
+    env_file:
+      - .env
     depends_on:
       - db
+    volumes:
+      - ./uploads:/home/nakajima/project/PFWebApp/uploads
   db:
     image: mysql:8.3
     container_name: mysql
@@ -20,8 +24,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=nkjweb
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=password
+    #  - MYSQL_USER=root
+    #  - MYSQL_PASSWORD=password
     ports:
       - "8800:3306"
     volumes:

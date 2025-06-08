@@ -1,5 +1,7 @@
 package com.nakajima.nkjwebapp.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,4 +40,12 @@ public class Contact {
 
     @Column(nullable = false)
     private boolean deleted =false;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt; // 作成日    
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }    
 }
